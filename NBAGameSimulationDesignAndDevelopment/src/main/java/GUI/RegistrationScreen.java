@@ -1,193 +1,140 @@
 package main.java.GUI;
 
+import main.java.User.UserManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class RegistrationScreen extends JPanel {
-    private JTextField usernameField;
-    private JTextField emailField;
-    private JPasswordField passwordField;
-    private JTextField nameField;
-    private JTextField surnameField;
-    private JTextField ageField;
-    private JButton registerButton;
-    private MainApplication mainApp; // Reference to the main application
+public class RegistrationScreen extends JFrame {
+    private JTextField txtNickname;
+    private JPasswordField pwdPassword;
+    private JTextField txtRealName;
+    private JTextField txtSurname;
+    private JTextField txtAge;
+    private JTextField txtEmail;
+    private JButton btnRegister;
+    private JButton btnCancel;
 
-    public RegistrationScreen(MainApplication mainApp) {
-        this.mainApp = mainApp;
+    // Assume UserManager is a class that handles user registration
+    private UserManager userManager;
+
+    public RegistrationScreen(UserManager userManager) {
+        this.userManager = userManager;
+
+        setTitle("Register New User");
+        setSize(350, 250);
+        setLocationRelativeTo(null); // Center the window on screen
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new GridBagLayout());
+
         initializeComponents();
     }
 
     private void initializeComponents() {
-        setLayout(new BorderLayout());
-        JPanel formPanel = createFormPanel();
-        add(formPanel, BorderLayout.CENTER);
-    }
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(2, 2, 2, 2);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
-    private JPanel createFormPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        // Nickname
+        add(new JLabel("Nickname:"), gbc);
+        gbc.gridy++;
+        txtNickname = new JTextField(20);
+        add(txtNickname, gbc);
 
-        JLabel usernameLabel = new JLabel("Username:");
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        panel.add(usernameLabel, constraints);
+        // Password
+        gbc.gridy++;
+        add(new JLabel("Password:"), gbc);
+        gbc.gridy++;
+        pwdPassword = new JPasswordField(20);
+        add(pwdPassword, gbc);
 
-        usernameField = new JTextField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 0;
-        panel.add(usernameField, constraints);
+        // Real Name
+        gbc.gridy++;
+        add(new JLabel("Real Name:"), gbc);
+        gbc.gridy++;
+        txtRealName = new JTextField(20);
+        add(txtRealName, gbc);
 
-        JLabel emailLabel = new JLabel("Email:");
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        panel.add(emailLabel, constraints);
+        // Surname
+        gbc.gridy++;
+        add(new JLabel("Surname:"), gbc);
+        gbc.gridy++;
+        txtSurname = new JTextField(20);
+        add(txtSurname, gbc);
 
-        emailField = new JTextField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 1;
-        panel.add(emailField, constraints);
+        // Age
+        gbc.gridy++;
+        add(new JLabel("Age:"), gbc);
+        gbc.gridy++;
+        txtAge = new JTextField(20);
+        add(txtAge, gbc);
 
-        JLabel passwordLabel = new JLabel("Password:");
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        panel.add(passwordLabel, constraints);
+        // Email
+        gbc.gridy++;
+        add(new JLabel("Email:"), gbc);
+        gbc.gridy++;
+        txtEmail = new JTextField(20);
+        add(txtEmail, gbc);
 
-        passwordField = new JPasswordField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 2;
-        panel.add(passwordField, constraints);
-
-        JLabel nameLabel = new JLabel("Name:");
-        constraints.gridx = 0;
-        constraints.gridy = 3;
-        panel.add(nameLabel, constraints);
-
-        nameField = new JTextField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 3;
-        panel.add(nameField, constraints);
-
-        JLabel surnameLabel = new JLabel("Surname:");
-        constraints.gridx = 0;
-        constraints.gridy = 4;
-        panel.add(surnameLabel, constraints);
-
-        surnameField = new JTextField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 4;
-        panel.add(surnameField, constraints);
-
-        JLabel ageLabel = new JLabel("Age:");
-        constraints.gridx = 0;
-        constraints.gridy = 5;
-        panel.add(ageLabel, constraints);
-
-        ageField = new JTextField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 5;
-        panel.add(ageField, constraints);
-
-        registerButton = new JButton("Register");
-        constraints.gridx = 0;
-        constraints.gridy = 6;
-        constraints.gridwidth = 2;
-        panel.add(registerButton, constraints);
-
-        registerButton.addActionListener(new ActionListener() {
+        // Register Button
+        gbc.gridy++;
+        btnRegister = new JButton("Register");
+        btnRegister.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                performRegistration();
+                registerUser();
             }
         });
+        add(btnRegister, gbc);
 
-        return panel;
+        // Cancel Button
+        gbc.gridx++;
+        btnCancel = new JButton("Cancel");
+        btnCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RegistrationScreen.this.dispose();
+            }
+        });
+        add(btnCancel, gbc);
+
+        pack(); // Adjusts window size to fit components
     }
 
-    private void performRegistration() {
-    	String username = usernameField.getText();
-    	String email = emailField.getText();
-    	String password = new String(passwordField.getPassword());
-    	String name = nameField.getText();  // Assuming you have a text field for name
-    	String surname = surnameField.getText();  // Assuming you have a text field for surname
-    	Integer age = null;
-    	
-    	try {
-            // Attempt to parse age as an integer
-            age = Integer.parseInt(ageField.getText());
-        } catch (NumberFormatException e) {
-            // Handle the case where age is not a valid integer
-            JOptionPane.showMessageDialog(this, "Please enter a valid age.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    private void registerUser() {
+        // Get user input from text fields
+        String nickname = txtNickname.getText();
+        String password = new String(pwdPassword.getPassword());
+        String realName = txtRealName.getText();
+        String surname = txtSurname.getText();
+        int age = Integer.parseInt(txtAge.getText()); // This should include error handling for non-integer input
+        String email = txtEmail.getText();
 
+        // Validate input and register user
+        boolean success = userManager.registerUser(nickname, password, realName, surname, age, email);
 
-        // Implement your registration logic here
-        if (validateRegistrationDetails(username, email, password, name, surname, age)) {
-            // Registration logic
-            // Show success message or navigate to login screen
-            JOptionPane.showMessageDialog(this, "Registration Successful", "Success", JOptionPane.INFORMATION_MESSAGE);
-            // Example: mainApp.showScreen("LoginScreen");
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Registration successful!");
+            dispose(); // Close the registration window
         } else {
-            // Show error message
-            JOptionPane.showMessageDialog(this, "Invalid or incomplete registration details", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Registration failed. Please try again with different credentials.");
         }
     }
 
-    private boolean validateRegistrationDetails(String username, String email, String password, String name, String surname, int age) {
-        // Check constraints for username
-        if (!isValidUsername(username)) {
-            return false;
-        }
+    public static void main(String[] args) {
+        // For testing purposes, assume there's a UserManager instance
+        UserManager userManager = new UserManager(); // Replace with actual instantiation
 
-        // Check constraints for email
-        if (!isValidEmail(email)) {
-            return false;
-        }
-
-        // Check constraints for password
-        if (!isValidPassword(password)) {
-            return false;
-        }
-
-        // Check constraints for name and surname
-        if (!isValidName(name) || !isValidName(surname)) {
-            return false;
-        }
-
-        // Check constraints for age
-        if (age < 12) {
-            return false;
-        }
-
-        // All constraints passed
-        return true;
-    }
-
-    private boolean isValidUsername(String username) {
-        // Username can only include letter and number characters
-        String usernameRegex = "^[a-zA-Z0-9]+$";
-        return username.matches(usernameRegex);
-    }
-
-    private boolean isValidEmail(String email) {
-        // Email address should be in the correct format
-        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$";
-        return email.matches(emailRegex);
-    }
-
-    private boolean isValidPassword(String password) {
-        // Password should be at least eight characters, including letters, numbers, and special characters
-        return password.length() >= 8 && password.matches(".*[a-zA-Z]+.*") && password.matches(".*\\d+.*") && password.matches(".*[!@#$%^&*()_+\\-=[]{};':\",./<>?|\\\\`~]+.*");
-    }
-
-    private boolean isValidName(String name) {
-        // Name and surname should have at least three characters (only letters)
-        return name.length() >= 3 && name.matches("^[a-zA-Z]+$");
+        // Launch the registration screen
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new RegistrationScreen(userManager).setVisible(true);
+            }
+        });
     }
 }

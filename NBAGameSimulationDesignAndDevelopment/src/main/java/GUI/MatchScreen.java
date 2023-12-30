@@ -1,177 +1,101 @@
 package main.java.GUI;
 
-import javax.swing.*;
-
+import main.java.Game.Match;
 import main.java.Team.Team;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.regex.MatchResult;
 
-public class MatchScreen extends JPanel {
-    private MainApplication mainApplication;
-    private List<Team> teams;
-    private List<MatchResult> matchResults;
-    private int currentMatchIndex;
-    private Timer timer;
+public class MatchScreen extends JFrame {
+    private JLabel lblTeam1;
+    private JLabel lblTeam2;
+    private JLabel lblScore1;
+    private JLabel lblScore2;
+    private JButton btnPlayMatch;
+    private Match match;
 
-    public MatchScreen(MainApplication mainApplication, List<Team> teams) {
-        this.mainApplication = mainApplication;
-        this.teams = teams;
-        this.matchResults = new ArrayList<>();
-        this.currentMatchIndex = 0;
-
+    public MatchScreen(Match match) {
+        this.match = match;
+        
         initializeComponents();
+        setTitle("Match Details");
+        setSize(400, 200);
+        setLayout(new GridBagLayout());
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setVisible(true);
     }
 
     private void initializeComponents() {
-        setLayout(new BorderLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(4, 4, 4, 4);
 
-        JButton pauseButton = new JButton("Pause");
-        JButton resumeButton = new JButton("Resume");
+        // Team 1 Label
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        lblTeam1 = new JLabel("Team 1: " + match.getTeam1().getTeamName());
+        add(lblTeam1, gbc);
 
-        pauseButton.addActionListener(new ActionListener() {
+        // Team 1 Score Label
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        lblScore1 = new JLabel("Score: " + (match.isPlayed() ? match.getScoreTeam1() : "N/A"));
+        add(lblScore1, gbc);
+
+        // Team 2 Label
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        lblTeam2 = new JLabel("Team 2: " + match.getTeam2().getTeamName());
+        add(lblTeam2, gbc);
+
+        // Team 2 Score Label
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        lblScore2 = new JLabel("Score: " + (match.isPlayed() ? match.getScoreTeam2() : "N/A"));
+        add(lblScore2, gbc);
+
+        // Play Match Button
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        btnPlayMatch = new JButton("Play Match");
+        btnPlayMatch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Pause the simulation
-                timer.stop();
-                // Replace the Pause button with Resume button
-                remove(pauseButton);
-                add(resumeButton, BorderLayout.SOUTH);
-                revalidate();
-                repaint();
-            }
-        });
-
-        resumeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Resume the simulation
-                timer.start();
-                // Replace the Resume button with Pause button
-                remove(resumeButton);
-                add(pauseButton, BorderLayout.SOUTH);
-                revalidate();
-                repaint();
-            }
-        });
-
-        add(pauseButton, BorderLayout.SOUTH); // Initially, show the Pause button
-
-        // Create a panel for the playoff tree
-        JPanel playoffPanel = createPlayoffPanel();
-        add(playoffPanel, BorderLayout.CENTER);
-
-        // Simulate the matchmaking process
-        simulateMatchmaking();
-    }
-
-    private JPanel createPlayoffPanel() {
-        JPanel playoffPanel = new JPanel(new GridLayout(3, 3));
-
-        // Create buttons for each stage of the playoff tree
-        for (int i = 0; i < 9; i++) {
-            JButton matchButton = new JButton("Match " + (i + 1));
-            playoffPanel.add(matchButton);
-
-            // Add ActionListener to handle match button clicks
-            matchButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Handle match button click
-                    // You can display match details or perform other actions
-                    int matchNumber = i + 1;
-                    if (matchNumber <= matchResults.size()) {
-                        MatchResult result = matchResults.get(i);
-                        displayMatchResult(result);
-                    }
-                }
-            });
-        }
-
-        return playoffPanel;
-    }
-
-    // Simulate the matchmaking process
-    private void simulateMatchmaking() {
-        int numTeams = teams.size();
-        int numMatches = 2 * numTeams;
-
-        // Play M different games
-        for (int i = 0; i < numMatches; i++) {
-            // Randomly pick teams for the match
-            Team teamA = teams.get(new Random().nextInt(numTeams));
-            Team teamB = teams.get(new Random().nextInt(numTeams));
-
-            // Simulate the game and determine the winner
-            Team winner = simulateGame(teamA, teamB);
-
-            // Update match results
-            MatchResult matchResult = new MatchResult(teamA, teamB, winner);
-            matchResults.add(matchResult);
-        }
-
-        // Sort teams based on the number of wins
-        teams.sort((t1, t2) -> Integer.compare(t2.getWins(), t1.getWins()));
-
-        // Set up a timer to run the playoff matches with a delay of 0.1 seconds
-        timer = new Timer(100, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (currentMatchIndex < matchResults.size()) {
-                    // Play playoff matches one by one
-                    MatchResult result = matchResults.get(currentMatchIndex);
-                    displayMatchResult(result);
-                    currentMatchIndex++;
-                } else {
-                    // All matches are over, stop the timer
-                    timer.stop();
-                    JOptionPane.showMessageDialog(MatchScreen.this, "Tournament Over");
+                if (!match.isPlayed()) {
+                    match.playMatch(); // The Match class needs to have a method to simulate the match
+                    lblScore1.setText("Score: " + match.getScoreTeam1());
+                    lblScore2.setText("Score: " + match.getScoreTeam2());
+                    btnPlayMatch.setEnabled(false); // Disable the button after playing the match
                 }
             }
         });
+        add(btnPlayMatch, gbc);
 
-        // Start the timer
-        timer.start();
-    }
-
-    // Simulate a game between two teams and determine the winner
-    private Team simulateGame(Team teamA, Team teamB) {
-        // Determine the home team (randomly selected)
-        Team homeTeam = (new Random().nextBoolean()) ? teamA : teamB;
-
-        // Multiply home team's score by 1.05
-        int homeTeamScore = (int) (homeTeam.calculateTotalScore() * 1.05);
-        int awayTeamScore = teamA.calculateTotalScore() + teamB.calculateTotalScore();
-
-        // Determine the winner
-        return (homeTeamScore > awayTeamScore) ? homeTeam : (awayTeamScore > homeTeamScore) ? teamA : teamB;
-    }
-
-    // Display the result of a match
- // Display the result of a match
-    private void displayMatchResult(int matchIndex) {
-        if (matchIndex < matchResults.size()) {
-            Team teamA = matchResults.get(matchIndex).getTeamA();
-            Team teamB = matchResults.get(matchIndex).getTeamB();
-            Team winner = matchResults.get(matchIndex).getWinner();
-
-            // Update the UI to show match result
-            // You can customize this based on your UI requirements
-            JOptionPane.showMessageDialog(
-                    MatchScreen.this,
-                    "Match Result:\n" +
-                            teamA.getName() + " vs " + teamB.getName() + "\n" +
-                            "Winner: " + winner.getName(),
-                    "Match Result",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+        // If the match is already played, disable the Play Match button
+        if (match.isPlayed()) {
+            btnPlayMatch.setEnabled(false);
         }
     }
 
-    }
+    // Main method for testing
+    public static void main(String[] args) {
+        // Sample teams for testing
+        Team team1 = new Team("Warriors", "warriors.png");
+        Team team2 = new Team("Lakers", "lakers.png");
 
+        // Sample match for testing
+        Match match = new Match(team1, team2);
+
+        // Start the Match Screen
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new MatchScreen(match);
+            }
+        });
+    }
+}

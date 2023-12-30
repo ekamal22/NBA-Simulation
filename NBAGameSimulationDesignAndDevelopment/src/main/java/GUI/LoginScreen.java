@@ -1,96 +1,106 @@
 package main.java.GUI;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import main.java.Utils.AuthenticationService;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+public class LoginScreen extends JFrame {
+    private JTextField txtUsername;
+    private JPasswordField pwdPassword;
+    private JButton btnLogin;
+    private JButton btnCancel;
 
-import main.java.Utils.AuthenticationService;
+    // Now using AuthenticationService for user authentication
+    private AuthenticationService authenticationService;
 
-public class LoginScreen extends JPanel {
-    // Components like text fields, labels, buttons
-    private JTextField usernameField;
-    private JPasswordField passwordField;
-    private JButton loginButton;
-    private MainApplication app;
-    private AuthenticationService authService;
+    public LoginScreen(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
 
+        setTitle("Login");
+        setSize(300, 150);
+        setLocationRelativeTo(null); // Center the window on screen
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new GridBagLayout());
 
-    public LoginScreen(MainApplication app) {
-        this.app = app;
-        this.authService = new AuthenticationService();
         initializeComponents();
-        // Initialize login components and layout
-        // Add action listeners that call app.showScreen("OtherScreenName") for navigation
     }
-    
 
-    // Method to handle login
     private void initializeComponents() {
-        setLayout(new BorderLayout());
-        JPanel formPanel = createFormPanel();
-        add(formPanel, BorderLayout.CENTER);
-    }
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(2, 2, 2, 2);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
-    private JPanel createFormPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        // Username
+        add(new JLabel("Username:"), gbc);
+        gbc.gridy++;
+        txtUsername = new JTextField(20);
+        add(txtUsername, gbc);
 
-        JLabel usernameLabel = new JLabel("Username:");
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        panel.add(usernameLabel, constraints);
+        // Password
+        gbc.gridy++;
+        add(new JLabel("Password:"), gbc);
+        gbc.gridy++;
+        pwdPassword = new JPasswordField(20);
+        add(pwdPassword, gbc);
 
-        usernameField = new JTextField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 0;
-        panel.add(usernameField, constraints);
-
-        JLabel passwordLabel = new JLabel("Password:");
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        panel.add(passwordLabel, constraints);
-
-        passwordField = new JPasswordField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 1;
-        panel.add(passwordField, constraints);
-
-        loginButton = new JButton("Login");
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        constraints.gridwidth = 2;
-        panel.add(loginButton, constraints);
-
-        loginButton.addActionListener(new ActionListener() {
+        // Login Button
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        btnLogin = new JButton("Login");
+        btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                performLogin();
+                login();
             }
         });
+        add(btnLogin, gbc);
 
-        return panel;
+        // Cancel Button
+        gbc.gridx++;
+        btnCancel = new JButton("Cancel");
+        btnCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LoginScreen.this.dispose();
+            }
+        });
+        add(btnCancel, gbc);
+
+        pack(); // Adjusts window size to fit components
     }
 
-    private void performLogin() {
-        String username = usernameField.getText();
-        String password = new String(passwordField.getPassword());
+    private void login() {
+        // Get user input from text fields
+        String username = txtUsername.getText();
+        String password = new String(pwdPassword.getPassword());
 
-        if (authService.authenticate(username, password)) {
-            JOptionPane.showMessageDialog(this, "Login Successful", "Success", JOptionPane.INFORMATION_MESSAGE);
-            // mainApp.showScreen("NextScreenName"); // Navigate to another screen
+        // Validate input and authenticate user using AuthenticationService
+        boolean isAuthenticated = authenticationService.authenticate(username, password);
+
+        if (isAuthenticated) {
+            JOptionPane.showMessageDialog(this, "Login successful!");
+            // Proceed to the next part of your application
+            dispose(); // Close the login window
         } else {
-            JOptionPane.showMessageDialog(this, "Invalid Username or Password", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Invalid credentials. Please try again.");
         }
     }
 
-    private boolean validateCredentials(String username, String password) {
-        // Implement your validation logic here
-        // For now, let's assume any non-empty credentials are valid
-        return !username.isEmpty() && !password.isEmpty();
+    public static void main(String[] args) {
+        // For testing purposes, assume there's an AuthenticationService instance
+        AuthenticationService authService = new AuthenticationService(); // Replace with actual instantiation
+
+        // Launch the login screen
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new LoginScreen(authService).setVisible(true);
+            }
+        });
     }
 }

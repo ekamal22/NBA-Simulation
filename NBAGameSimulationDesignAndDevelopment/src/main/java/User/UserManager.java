@@ -6,7 +6,7 @@ import java.util.List;
 
 public class UserManager {
     private List<User> users;
-    private final String usersFilePath = "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\DataFiles\\2022-2023 NBA Player Stats - Regular.csv";
+    private final String usersFilePath = "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\DataFiles\\Users.txt";
 
     // Constructor
     public UserManager() {
