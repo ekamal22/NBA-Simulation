@@ -243,7 +243,20 @@ public class TeamManager {
         List<Player> players = team.getPlayers();
         return players != null && players.size() >= MIN_PLAYERS_PER_TEAM && players.size() <= MAX_PLAYERS_PER_TEAM;
     }
+    
+    public void startNewSeason() {
+        if (!isSeasonReady()) {
+            System.out.println("Season not ready. Auto-drafting players to teams.");
+            autoDraftForTeams();
+        }
 
+        if (isSeasonReady()) {
+            currentSeason = new Season(teams);
+            System.out.println("New season started.");
+        } else {
+            System.out.println("Failed to start the season. Teams are not ready.");
+        }
+    }
 
 
     // Additional methods can be added as needed...

@@ -42,6 +42,14 @@ public class Match {
         }
         return winner;
     }
+    
+    public Team getLoser() {
+        if (!isPlayed) {
+            throw new IllegalStateException("Match has not been played yet.");
+        }
+        // The loser is the team that is not the winner
+        return winner == team1 ? team2 : team1;
+    }
 
     public int getScoreTeam1() {
         if (!isPlayed) {

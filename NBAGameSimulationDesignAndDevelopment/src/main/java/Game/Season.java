@@ -21,11 +21,10 @@ public class Season {
     }
 
     // Schedule matches for the season
-    private void scheduleMatches() {
-        // Clear previous schedule
-        matches.clear();
-        int M = Math.max(2 * teams.size(), teams.size() * (teams.size() - 1) / 2); // Ensure M is at least twice the number of teams
-        // Implementing a round-robin schedule
+    /*private void scheduleMatches() {
+        matches.clear(); // Clear previous schedule
+
+        // Implementing a single round-robin schedule
         for (int i = 0; i < teams.size(); i++) {
             for (int j = i + 1; j < teams.size(); j++) {
                 // Schedule match between team i and team j
@@ -33,44 +32,71 @@ public class Season {
             }
         }
 
-        // Optionally, you can shuffle the matches to randomize the schedule
-        Collections.shuffle(matches);
+        Collections.shuffle(matches); // Randomize the schedule
+    }*/
+    private void scheduleMatches() {
+        matches.clear();
+        // Shuffle and divide teams into groups
+        Collections.shuffle(teams);
+        List<Team> groupA = teams.subList(0, 4);
+        List<Team> groupB = teams.subList(4, 8);
+        List<Team> groupC = teams.subList(8, 12);
+        List<Team> groupD = teams.subList(12, 16);
+
+        scheduleGroupMatches(groupA);
+        scheduleGroupMatches(groupB);
+        scheduleGroupMatches(groupC);
+        scheduleGroupMatches(groupD);
+    }
+    private void scheduleGroupMatches(List<Team> group) {
+        for (int i = 0; i < group.size(); i++) {
+            for (int j = i + 1; j < group.size(); j++) {
+                matches.add(new Match(group.get(i), group.get(j)));
+            }
+        }
     }
 
 
-    // Play all matches in the season
-    /*public void playSeason() {
-        if (isSeasonOver) {
-            throw new IllegalStateException("Season has already been played.");
-        }
-
-        for (Match match : matches) {
-            match.playMatch();
-            // Here, update team records, standings, or any other relevant data
-            // For example, you might increment the win count for the winning team
-            Team winner = match.getWinner();
-            // Increment win for winner, loss for loser, etc.
-        }
-
-        isSeasonOver = true;
-        // Optionally, calculate final standings or other end-of-season tasks
-    }*/
+    
     
     public void playSeason() {
         if (isSeasonOver) {
             throw new IllegalStateException("Season already played.");
         }
 
-        // Play regular season matches
         for (Match match : matches) {
             match.playMatch();
-            // Update team records
-            // ...
+            updateTeamRecords(match);
         }
-
+        calculateFinalStandings();
         startPlayoffs(); // Start the playoff tournament
-
         isSeasonOver = true;
+    }
+    
+    private void calculateFinalStandings() {
+        // Sort teams based on wins (and other criteria if needed)
+        Collections.sort(teams, (Team t1, Team t2) -> {
+            // Compare based on wins, you can add more criteria here
+            return Integer.compare(t2.getWins(), t1.getWins());
+        });
+
+        // Optionally, print final standings for debugging
+        System.out.println("Final Standings:");
+        for (int i = 0; i < teams.size(); i++) {
+            Team team = teams.get(i);
+            System.out.println((i + 1) + ". " + team.getTeamName() + " - Wins: " + team.getWins() + ", Losses: " + team.getLosses());
+        }
+    }
+    
+    private void updateTeamRecords(Match match) {
+        Team winner = match.getWinner();
+        Team loser = match.getLoser(); // Assuming you have a method to get the losing team
+
+        if (winner != null && loser != null) {
+            winner.addWin();
+            // Add logic for loser if needed, e.g., incrementing loss count
+            loser.addLoss();
+        }
     }
     private List<Team> getTopTeams(int N) {
         // Create a copy of the teams list to avoid modifying the original list

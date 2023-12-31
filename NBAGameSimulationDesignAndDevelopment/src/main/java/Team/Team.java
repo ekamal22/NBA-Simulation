@@ -10,6 +10,8 @@ public class Team {
     private List<Player> players;
     private String teamLogo; // Path to the team logo file
     private int wins;
+    private int losses; // Add this new member to track the number of losses
+
     // Constructor
     public Team(String teamName, String teamLogo) {
         this.teamName = teamName;
@@ -24,6 +26,14 @@ public class Team {
     
     public int getWins() {
         return this.wins;
+    }
+    
+    public void addLoss() { // New method to increment the loss count
+        this.losses++;
+    }
+    
+    public int getLosses() { // New getter for losses
+        return this.losses;
     }
     
     // Add a player to the team
