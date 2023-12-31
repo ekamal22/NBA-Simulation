@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import main.java.Game.Season;
 import main.java.Player.Center;
 import main.java.Player.Player;
 import main.java.Player.PointGuard;
@@ -18,7 +19,8 @@ import main.java.Player.SmallForward;
 public class TeamManager {
     private List<Team> teams;
     private Map<String, Player> availablePlayers; // Map of available players by their name
-
+    private final int MIN_PLAYERS_PER_TEAM = 12;
+    private Season currentSeason;
     // Constructor
     public TeamManager() {
         teams = new ArrayList<>();
@@ -29,7 +31,7 @@ public class TeamManager {
 
     // Load players into the availablePlayers map
     private void loadPlayers() {
-        String csvFilePath = "C:\\Users\\Effendi Jabid Kamal\\eclipse-workspace\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\DataFiles\\2022-2023 NBA Player Stats - Regular.csv"; 
+        String csvFilePath = "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/DataFiles/2022-2023 NBA Player Stats - Regular.csv"; 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
             String line;
             br.readLine(); // Skip the header line
@@ -119,6 +121,43 @@ public class TeamManager {
     public Map<String, Player> getAvailablePlayers() {
         return new HashMap<>(availablePlayers); // Return a copy to prevent external modification
     }
+    public boolean startSeason() {
+        if (isSeasonReady()) {
+            // Initialize a new Season with the teams
+            currentSeason = new Season(teams);
+            return true;
+        } else {
+            return false; // Season is not ready to start
+        }
+    }
+
+    public boolean isSeasonReady() {
+        if (teams.isEmpty()) {
+            return false; // No teams are registered
+        }
+
+        for (Team team : teams) { // Iterate through the List<Team> directly
+            if (!isTeamReady(team)) {
+                return false; // At least one team is not ready
+            }
+        }
+
+        return true; // All teams are ready
+    }
+    
+    public Season getCurrentSeason() {
+        return currentSeason;
+    }
+    
+    public boolean isTeamReady(Team team) {
+        if (team == null) {
+            return false; // Return false if team is null
+        }
+        List<Player> players = team.getPlayers();
+        return players != null && players.size() >= MIN_PLAYERS_PER_TEAM;
+    }
+
+
 
     // Additional methods can be added as needed...
 }

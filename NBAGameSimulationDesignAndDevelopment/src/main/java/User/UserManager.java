@@ -6,7 +6,7 @@ import java.util.List;
 
 public class UserManager {
     private List<User> users;
-    private final String usersFilePath = "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\DataFiles\\Users.txt";
+    private final String usersFilePath = "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/DataFiles/Users.txt";
 
     // Constructor
     public UserManager() {
@@ -115,5 +115,12 @@ public class UserManager {
         }
     }
 
-    // Additional methods as needed...
+    public User getUser(String username) {
+        for (User user : users) {
+            if (user.getNickname().equals(username)) {
+                return user;
+            }
+        }
+        return null; // Return null if the user is not found
+    }
 }

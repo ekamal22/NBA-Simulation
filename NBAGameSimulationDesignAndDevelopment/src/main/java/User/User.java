@@ -17,7 +17,7 @@ public class User {
         this.surname = surname;
         this.age = age;
         this.email = email;
-        this.profilePhoto = "C:\\Users\\Effendi Jabid Kamal\\eclipse-workspace\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Default pfp.png"; // Assuming a default image
+        this.profilePhoto = "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Default pfp.png"; // Assuming a default image
     }
 
     // Getters and Setters

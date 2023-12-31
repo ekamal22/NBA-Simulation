@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AuthenticationService {
-    private static final String USERS_FILE = "users.txt";
+    private static final String USERS_FILE = "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/DataFiles/Users.txt";
     private Map<String, User> users;
 
     public AuthenticationService() {
@@ -15,8 +15,8 @@ public class AuthenticationService {
         loadUsersFromFile();
     }
 
-    public boolean authenticate(String username, String password) {
-        User user = users.get(username);
+    public boolean authenticate(String nickname, String password) {
+        User user = users.get(nickname);
         return user != null && user.getPassword().equals(password);
     }
 

@@ -1,24 +1,29 @@
 package main.java.GUI;
 
+import main.java.User.User;
+import main.java.User.UserManager;
 import main.java.Utils.AuthenticationService;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import main.java.Utils.AuthenticationService;
 
 public class LoginScreen extends JFrame {
     private JTextField txtUsername;
     private JPasswordField pwdPassword;
     private JButton btnLogin;
     private JButton btnCancel;
-
+    private LoginCallback loginCallback;
+    private UserManager userManager;
     // Now using AuthenticationService for user authentication
     private AuthenticationService authenticationService;
 
-    public LoginScreen(AuthenticationService authenticationService) {
+    public LoginScreen(AuthenticationService authenticationService, UserManager userManager, LoginCallback callback) {
+    	this.userManager = userManager;
         this.authenticationService = authenticationService;
-
+        this.loginCallback = callback;
         setTitle("Login");
         setSize(300, 150);
         setLocationRelativeTo(null); // Center the window on screen
@@ -84,6 +89,8 @@ public class LoginScreen extends JFrame {
 
         if (isAuthenticated) {
             JOptionPane.showMessageDialog(this, "Login successful!");
+            User loggedInUser = userManager.getUser(username); // Assuming getUser() fetches the User object
+            loginCallback.onLoginSuccess(loggedInUser);
             // Proceed to the next part of your application
             dispose(); // Close the login window
         } else {
@@ -92,14 +99,16 @@ public class LoginScreen extends JFrame {
     }
 
     public static void main(String[] args) {
-        // For testing purposes, assume there's an AuthenticationService instance
+        // For testing purposes, create mock instances or pass null
         AuthenticationService authService = new AuthenticationService(); // Replace with actual instantiation
+        UserManager userManager = null; // Replace with actual instantiation or mock
+        LoginCallback loginCallback = null; // Replace with actual implementation or mock
 
         // Launch the login screen
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new LoginScreen(authService).setVisible(true);
+                new LoginScreen(authService, userManager, loginCallback).setVisible(true);
             }
         });
     }

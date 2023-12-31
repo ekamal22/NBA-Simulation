@@ -84,8 +84,9 @@ public class MatchScreen extends JFrame {
     // Main method for testing
     public static void main(String[] args) {
         // Sample teams for testing
-        Team team1 = new Team("Warriors", "warriors.png");
-        Team team2 = new Team("Lakers", "lakers.png");
+        Team team1 = new Team("Celtics", "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Celtics logo.png");
+        Team team2 = new Team("Lakers", "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\los-angeles-lakers-logo.png");
+        
 
         // Sample match for testing
         Match match = new Match(team1, team2);
