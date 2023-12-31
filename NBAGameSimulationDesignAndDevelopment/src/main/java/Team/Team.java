@@ -9,17 +9,32 @@ public class Team {
     private String teamName;
     private List<Player> players;
     private String teamLogo; // Path to the team logo file
-
+    private int wins;
     // Constructor
     public Team(String teamName, String teamLogo) {
         this.teamName = teamName;
         this.teamLogo = teamLogo;
         this.players = new ArrayList<>();
     }
-
+    
+    
+    public void addWin() {
+        this.wins++;
+    }
+    
+    public int getWins() {
+        return this.wins;
+    }
+    
     // Add a player to the team
-    public void addPlayer(Player player) {
+    /*public void addPlayer(Player player) {
         players.add(player);
+    }*/
+    
+    public void addPlayer(Player player) {
+        if (!players.contains(player)) {
+            players.add(player);
+        }
     }
 
     // Remove a player from the team

@@ -28,8 +28,13 @@ public class MatchScreen extends JFrame {
         setVisible(true);
     }
 
+    
     private void initializeComponents() {
+        // Setting GridBagLayout for the entire frame
+        setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
+        
+        // Common GridBagConstraints settings
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
 
@@ -41,8 +46,7 @@ public class MatchScreen extends JFrame {
 
         // Team 1 Score Label
         gbc.gridx = 1;
-        gbc.gridy = 0;
-        lblScore1 = new JLabel("Score: " + (match.isPlayed() ? match.getScoreTeam1() : "N/A"));
+        lblScore1 = new JLabel(" Score: " + (match.isPlayed() ? match.getScoreTeam1() : "N/A"));
         add(lblScore1, gbc);
 
         // Team 2 Label
@@ -53,23 +57,22 @@ public class MatchScreen extends JFrame {
 
         // Team 2 Score Label
         gbc.gridx = 1;
-        gbc.gridy = 1;
-        lblScore2 = new JLabel("Score: " + (match.isPlayed() ? match.getScoreTeam2() : "N/A"));
+        lblScore2 = new JLabel(" Score: " + (match.isPlayed() ? match.getScoreTeam2() : " N/A "));
         add(lblScore2, gbc);
 
         // Play Match Button
         gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2; // Spanning across two columns
         btnPlayMatch = new JButton("Play Match");
         btnPlayMatch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!match.isPlayed()) {
-                    match.playMatch(); // The Match class needs to have a method to simulate the match
-                    lblScore1.setText("Score: " + match.getScoreTeam1());
-                    lblScore2.setText("Score: " + match.getScoreTeam2());
-                    btnPlayMatch.setEnabled(false); // Disable the button after playing the match
+                    match.playMatch(); // Simulate the match
+                    lblScore1.setText(" Score: " + match.getScoreTeam1() + " ");
+                    lblScore2.setText(" Score: " + match.getScoreTeam2() + " ");
+                    btnPlayMatch.setEnabled(false);
                 }
             }
         });
