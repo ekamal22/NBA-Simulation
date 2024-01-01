@@ -19,6 +19,10 @@ public class Team {
         this.players = new ArrayList<>();
     }
     
+    public int compareTo(Team other) {
+        // Assuming more wins is better. Change this logic if you have other criteria.
+        return Integer.compare(other.getWins(), this.getWins());
+    }
     
     public void addWin() {
         this.wins++;

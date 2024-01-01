@@ -8,6 +8,7 @@ import main.java.User.User;
 import main.java.Utils.AuthenticationService;
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class MainApplication extends JFrame {
 
@@ -27,7 +28,10 @@ public class MainApplication extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-
+     // Create an ImagePanel with the path to your image
+        ImagePanel backgroundPanel = new ImagePanel("C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Fullscreen Image.png");
+     // Add the ImagePanel to the frame
+        add(backgroundPanel, BorderLayout.CENTER);
         initializeMenu();
     }
 
@@ -149,7 +153,7 @@ public class MainApplication extends JFrame {
     private void openDraftScreen() {
         if (currentUser != null) {
             if (currentUserTeam == null) {
-                currentUserTeam = new Team("User Team", "path_to_logo"); // Or however you determine the logo
+                currentUserTeam = new Team("User Team", "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Default pfp.png"); // Or however you determine the logo
                 teamManager.createTeam(currentUserTeam.getTeamName(), currentUserTeam.getTeamLogo());
             }
             DraftScreen draftScreen = new DraftScreen(teamManager, currentUserTeam);
@@ -158,18 +162,23 @@ public class MainApplication extends JFrame {
             JOptionPane.showMessageDialog(this, "Please log in first.");
         }
     }
-    private void openMatchScreen(Match match) {
-        MatchScreen matchScreen = new MatchScreen(match);
-        matchScreen.setVisible(true);
+    private void openMatchScreen(List<Match> matches) {
+        if (matches != null && !matches.isEmpty()) {
+            MatchScreen matchScreen = new MatchScreen(matches); // Pass the list of matches
+            matchScreen.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "No matches to display.");
+        }
     }
 
     private void openMatchSeasonScreen() {
-        // Assuming you have logic to get a current match or create a new one for demonstration
-        Match currentMatch = getCurrentMatch(); // Implement this method based on your game logic
-        if (currentMatch != null) {
-            openMatchScreen(currentMatch);
+        List<Match> seasonMatches = teamManager.getCurrentSeason().getMatches();
+        
+        if (seasonMatches != null && !seasonMatches.isEmpty()) {
+            MatchScreen matchScreen = new MatchScreen(seasonMatches); // Pass the list of matches
+            matchScreen.setVisible(true);
         } else {
-            JOptionPane.showMessageDialog(this, "No current match to display.");
+            JOptionPane.showMessageDialog(this, "No matches scheduled for the season.");
         }
     }
 
@@ -187,7 +196,7 @@ public class MainApplication extends JFrame {
         registrationScreen.setVisible(true);
         // Handle post-registration actions
     }
-
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new MainApplication().setVisible(true));

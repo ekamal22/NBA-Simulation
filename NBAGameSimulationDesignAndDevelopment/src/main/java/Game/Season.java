@@ -1,16 +1,23 @@
 package main.java.Game;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
+import main.java.GUI.MatchScreen;
 import main.java.Team.Team;
 
 public class Season {
     private List<Team> teams;
     private List<Match> matches;
     private boolean isSeasonOver;
+    private Timer matchTimer;
 
     // Constructor
     public Season(List<Team> teams) {
@@ -19,7 +26,8 @@ public class Season {
         this.isSeasonOver = false;
         scheduleMatches(); // Schedule matches for the season
     }
-
+    
+    
     // Schedule matches for the season
     /*private void scheduleMatches() {
         matches.clear(); // Clear previous schedule
@@ -68,6 +76,9 @@ public class Season {
             match.playMatch();
             updateTeamRecords(match);
         }
+        
+        
+        
         calculateFinalStandings();
         startPlayoffs(); // Start the playoff tournament
         isSeasonOver = true;
@@ -119,7 +130,75 @@ public class Season {
         // Return the top N teams from the sorted list
         return sortedTeams.subList(0, N);
     }
-    private void startPlayoffs() {
+    
+    public void playAndDelayMatches() {
+    	matchTimer = new Timer(100, event -> {
+            if (!matches.isEmpty()) {
+                Match match = matches.remove(0);
+                match.playMatch();
+                updateTeamRecords(match);
+                // Update GUI
+                SwingUtilities.invokeLater(() -> MatchScreen.updateMatchResults(match)); // This needs to be done on the EDT
+                // More code to update the GUI for wins/losses
+            } else {
+            	matchTimer.stop();
+                ((Timer) event.getSource()).stop();
+                // Now you need to create a list of playoff teams and pass it to displayPlayoffTree
+                List<Team> playoffTeams = determinePlayoffTeams(); // You'll need to implement this method
+                SwingUtilities.invokeLater(() -> displayPlayoffTree(playoffTeams)); // Also invoke this on the EDT
+            }
+        });
+        matchTimer.setInitialDelay(0);
+        matchTimer.start();
+    }
+    
+    private List<Team> determinePlayoffTeams() {
+        List<Team> sortedTeams = new ArrayList<>(this.teams);
+
+        // Sort the teams based on their wins, then losses (if wins are equal)
+        Collections.sort(sortedTeams, new Comparator<Team>() {
+            @Override
+            public int compare(Team t1, Team t2) {
+                // First compare by wins
+                int winComparison = Integer.compare(t2.getWins(), t1.getWins());
+                if (winComparison != 0) {
+                    return winComparison;
+                }
+                // If wins are equal, compare by losses (fewer losses is better)
+                return Integer.compare(t1.getLosses(), t2.getLosses());
+            }
+        });
+
+        // Assuming you want the top 8 teams for the playoffs
+        int numberOfPlayoffTeams = 8;
+        return sortedTeams.subList(0, Math.min(numberOfPlayoffTeams, sortedTeams.size()));
+    }
+    private void displayPlayoffTree(List<Team> playoffTeams) {
+        // Build the string representation of the playoff tree
+        StringBuilder treeBuilder = new StringBuilder();
+        int rounds = (int) (Math.log(playoffTeams.size()) / Math.log(2));
+        int matchNumber = 1;
+
+        for (int round = 0; round <= rounds; round++) {
+            int roundMatches = (int) Math.pow(2, rounds - round);
+            treeBuilder.append("Round ").append(round + 1).append(":\n");
+            for (int match = 0; match < roundMatches; match++) {
+                if (round * roundMatches + match < playoffTeams.size()) {
+                    Team team = playoffTeams.get(round * roundMatches + match);
+                    treeBuilder.append("Match ").append(matchNumber).append(": ")
+                            .append(team.getTeamName()).append("\n");
+                    matchNumber++;
+                }
+            }
+            treeBuilder.append("\n");
+        }
+
+        // This will display a dialog box with the playoff tree
+        JOptionPane.showMessageDialog(null, treeBuilder.toString(), "Playoff Tree", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
+	private void startPlayoffs() {
         List<Team> playoffTeams = getTopTeams(8); // Get the top 8 teams based on regular season performance
         List<Match> playoffMatches = new ArrayList<>();
 

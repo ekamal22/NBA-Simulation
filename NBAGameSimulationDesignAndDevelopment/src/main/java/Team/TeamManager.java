@@ -22,7 +22,7 @@ public class TeamManager {
     private Map<String, Player> availablePlayers; // Map of available players by their name
     private final int MIN_PLAYERS_PER_TEAM = 5;
     private final int MAX_PLAYERS_PER_TEAM = 15;
-    private Season currentSeason;
+    private static Season currentSeason;
     // Constructor
     public TeamManager() {
         teams = new ArrayList<>();
@@ -50,21 +50,21 @@ public class TeamManager {
                 "Los Angeles Lakers",
                 "Seattle Super Sonics"
             };
-        String[] teamLogos = {"C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Atlanta_Hawks.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Celtics_logo.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Brooklyn_Nets.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Charlotte_Hornets.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Chicago_Bulls.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Cleveland_Cavaliers.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Dallas_Mavericks.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Denver_Nuggets.svg.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Detroit_Pistons.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Golden_State_Warriors.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Houston_Rockets.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Indiana_Pacers.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Los_Angeles_Clippers.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Los_Angeles_Lakers.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Seattle_SuperSonics.png"};
+        String[] teamLogos = {"C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Atlanta Hawks.png",
+        		"C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Celtics logo.png",
+        		"C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Brooklyn Nets.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Charlotte Hornets.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Chicago Bulls.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Cleveland Cavaliers.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Dallas Mavericks.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Denver Nuggets.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Detroit Pistons.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Golden State Warriors.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Houston Rockets.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Indiana Pacers.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Los Angeles Clippers.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Los Angeles-Lakers.png",
+        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Seattle SuperSonics.png"};
         for (int i = 0; i < 15; i++) {
             createTeam(teamNames[i], teamLogos[i]);
         }
@@ -210,12 +210,11 @@ public class TeamManager {
     }
     public boolean startSeason() {
         if (isSeasonReady()) {
-            // Initialize a new Season with the teams
             currentSeason = new Season(teams);
-            return true;
-        } else {
-            return false; // Season is not ready to start
+            currentSeason.playAndDelayMatches();
+            return true;// Updated to use the delay
         }
+        return false;
     }
 
     public boolean isSeasonReady() {
@@ -232,7 +231,7 @@ public class TeamManager {
         return true; // All teams are ready
     }
     
-    public Season getCurrentSeason() {
+    public static Season getCurrentSeason() {
         return currentSeason;
     }
     
@@ -257,6 +256,8 @@ public class TeamManager {
             System.out.println("Failed to start the season. Teams are not ready.");
         }
     }
+    
+    
 
 
     // Additional methods can be added as needed...
