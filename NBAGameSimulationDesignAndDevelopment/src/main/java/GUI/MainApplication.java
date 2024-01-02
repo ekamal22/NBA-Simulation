@@ -164,7 +164,7 @@ public class MainApplication extends JFrame {
     }
     private void openMatchScreen(List<Match> matches) {
         if (matches != null && !matches.isEmpty()) {
-            MatchScreen matchScreen = new MatchScreen(matches); // Pass the list of matches
+            MatchScreen matchScreen = new MatchScreen(matches, teamManager); // Pass the list of matches
             matchScreen.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "No matches to display.");
@@ -173,9 +173,8 @@ public class MainApplication extends JFrame {
 
     private void openMatchSeasonScreen() {
         List<Match> seasonMatches = teamManager.getCurrentSeason().getMatches();
-        
         if (seasonMatches != null && !seasonMatches.isEmpty()) {
-            MatchScreen matchScreen = new MatchScreen(seasonMatches); // Pass the list of matches
+            MatchScreen matchScreen = new MatchScreen(seasonMatches, teamManager); // Pass teamManager here
             matchScreen.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "No matches scheduled for the season.");

@@ -18,6 +18,8 @@ public class Season {
     private List<Match> matches;
     private boolean isSeasonOver;
     private Timer matchTimer;
+    private int currentMatchIndex = 0;
+    private boolean isPaused;
 
     // Constructor
     public Season(List<Team> teams) {
@@ -25,6 +27,27 @@ public class Season {
         this.matches = new ArrayList<>();
         this.isSeasonOver = false;
         scheduleMatches(); // Schedule matches for the season
+    }
+    public boolean hasMoreMatches() {
+        return currentMatchIndex < matches.size();
+    }
+    public void playNextMatch() {
+    	if (isPaused || !hasMoreMatches()) {
+            return;
+        }
+        	if (hasMoreMatches()) {
+        		Match match = matches.get(currentMatchIndex);
+        		match.playMatch();
+        		updateTeamRecords(match);
+        		currentMatchIndex++;
+
+        		if (!hasMoreMatches()) {
+                // Handle end of season logic here
+        			calculateFinalStandings();
+        			startPlayoffs();
+        			isSeasonOver = true;
+            }
+        }
     }
     
     
@@ -46,6 +69,9 @@ public class Season {
         matches.clear();
         // Shuffle and divide teams into groups
         Collections.shuffle(teams);
+        if (teams.size() != 16) {
+            throw new IllegalStateException("Expected 16 teams, but found: " + teams.size());
+        }
         List<Team> groupA = teams.subList(0, 4);
         List<Team> groupB = teams.subList(4, 8);
         List<Team> groupC = teams.subList(8, 12);
@@ -132,7 +158,7 @@ public class Season {
     }
     
     public void playAndDelayMatches() {
-    	matchTimer = new Timer(100, event -> {
+    	matchTimer = new Timer(1000, event -> {
             if (!matches.isEmpty()) {
                 Match match = matches.remove(0);
                 match.playMatch();
@@ -149,8 +175,20 @@ public class Season {
             }
         });
         matchTimer.setInitialDelay(0);
-        matchTimer.start();
+        //matchTimer.start();
     }
+    
+    public void setPaused(boolean paused) {
+        this.isPaused = paused;
+        if (isPaused) {
+            matchTimer.stop(); // Stop the timer when paused
+        } else {
+            if (hasMoreMatches()) {
+                matchTimer.start(); // Start/resume the timer when unpaused
+            }
+        }
+    }
+
     
     private List<Team> determinePlayoffTeams() {
         List<Team> sortedTeams = new ArrayList<>(this.teams);

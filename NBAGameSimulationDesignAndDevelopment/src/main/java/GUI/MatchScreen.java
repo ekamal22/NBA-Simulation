@@ -32,7 +32,7 @@ public class MatchScreen extends JFrame {
     private Season currentSeason;
 
 
-    public MatchScreen(List<Match> matches) {
+    public MatchScreen(List<Match> matches, TeamManager teamManager) {
     	this.matches = matches;
         this.match = matches.get(currentMatchIndex); // Load the first match
         this.teamManager = teamManager;
@@ -47,7 +47,14 @@ public class MatchScreen extends JFrame {
         setVisible(true);
         standingsPanel = new JPanel();
         standingsPanel.setLayout(new BoxLayout(standingsPanel, BoxLayout.Y_AXIS));
-        add(standingsPanel, BorderLayout.EAST); // Add the panel to the frame
+        GridBagConstraints gbcPanel = new GridBagConstraints();
+        gbcPanel.gridx = 2; // Adjust these as per your layout needs
+        gbcPanel.gridy = 2; // Adjust these as per your layout needs
+        gbcPanel.fill = GridBagConstraints.BOTH;
+        gbcPanel.weightx = 1.0;
+        gbcPanel.weighty = 1.0;
+        add(standingsPanel, gbcPanel); // Add with constraints
+
         updateStandings();
         
 		
@@ -57,6 +64,7 @@ public class MatchScreen extends JFrame {
         isPaused = !isPaused;
         btnPauseResume.setText(isPaused ? "Resume" : "Pause");
         // Logic to pause/resume the simulation
+        currentSeason.setPaused(isPaused);
     }
     
     private void initializeComponents() {
@@ -75,7 +83,7 @@ public class MatchScreen extends JFrame {
         add(btnPauseResume, gbc);
 
         // Start the season
-        Season currentSeason = TeamManager.getCurrentSeason();
+        
         currentSeason.playAndDelayMatches();
      // Assuming gridx and gridy are set appropriately for your layout
         gbc.gridx = 2; // Column index where you want to place the logo
@@ -116,15 +124,29 @@ public class MatchScreen extends JFrame {
         gbc.gridwidth = 2; // Spanning across two columns
         btnPlayMatch = new JButton("Play Match");
         btnPlayMatch.addActionListener(new ActionListener() {
-            @Override
+           /* @Override
             public void actionPerformed(ActionEvent e) {
             	currentSeason.playAndDelayMatches();
                 if (!match.isPlayed()) {
                     match.playMatch(); // Simulate the match
                     lblScore1.setText(" Score: " + match.getScoreTeam1() + " ");
                     lblScore2.setText(" Score: " + match.getScoreTeam2() + " ");
+                    btnPlayMatch.setEnabled(false);*/
+        	/*@Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentSeason.hasMoreMatches()) {
+                    currentSeason.playNextMatch();
+                    updateMatchDetails(); // Update the GUI with new match details
+                } else {
+                    JOptionPane.showMessageDialog(MatchScreen.this, "Season completed!");
                     btnPlayMatch.setEnabled(false);
+                    
                 }
+            }*/
+        	@Override
+            public void actionPerformed(ActionEvent e) {
+                currentSeason.playAndDelayMatches(); // Start the simulation here
+                btnPlayMatch.setEnabled(false); // Disable the button after starting simulation
             }
         });
         
@@ -225,21 +247,13 @@ public class MatchScreen extends JFrame {
         Team team2 = new Team("Lakers", "/C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Los Angeles-Lakers.png");
         Team team3 = new Team("Atlanta Hawks", "/C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Atlanta Hawks.png");
         Team team4 = new Team("Brooklyn Nets", "/C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Brooklyn Nets.png");
-        /*Team team5 = new Team();
-        Team team6 = new Team();
-        Team team7 = new Team();
-        Team team8 = new Team();
-        Team team9 = new Team();
-        Team team10 = new Team();
-        Team team11 = new Team();
-        Team team12 = new Team();
-        Team team13 = new Team();
-        Team team14 = new Team();*/
-        /*Team team15 = new Team();
-        Team userteam = new Team();*/
-
+       
+        TeamManager teamManager = new TeamManager();
+        teamManager.startNewSeason();
         
-
+     // Ensure that currentSeason is properly initialized
+        Season currentSeason = teamManager.getCurrentSeason();
+        
         List<Match> matches = new ArrayList<>();
         matches.add(new Match(team1, team2));
         matches.add(new Match(team3, team4));
@@ -248,7 +262,7 @@ public class MatchScreen extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new MatchScreen(matches).setVisible(true);
+                new MatchScreen(matches,teamManager).setVisible(true);
             }
         });
     }
