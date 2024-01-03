@@ -40,6 +40,8 @@ public class MatchScreen extends JFrame {
         this.match = matches.get(currentMatchIndex); // Load the first match
         this.teamManager = teamManager;
         this.currentSeason = TeamManager.getCurrentSeason();
+        standingsPanel = new JPanel();
+        standingsPanel.setLayout(new BoxLayout(standingsPanel, BoxLayout.Y_AXIS));
         initializeComponents();
         updateMatchDetails();
         setTitle("Match Details");
@@ -48,8 +50,7 @@ public class MatchScreen extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
-        standingsPanel = new JPanel();
-        standingsPanel.setLayout(new BoxLayout(standingsPanel, BoxLayout.Y_AXIS));
+        
         GridBagConstraints gbcPanel = new GridBagConstraints();
         gbcPanel.gridx = 2; // Adjust these as per your layout needs
         gbcPanel.gridy = 2; // Adjust these as per your layout needs
@@ -227,8 +228,8 @@ public class MatchScreen extends JFrame {
         match = matches.get(currentMatchIndex);
 
         // Update Team 1 and Team 2 names
-        lblTeam1.setText("Team 1: " + match.getTeam1().getTeamName());
-        lblTeam2.setText("Team 2: " + match.getTeam2().getTeamName());
+        lblTeam1.setText("Team 1: " + match.getTeam1().getTeamName() + "");
+        lblTeam2.setText("Team 2: " + match.getTeam2().getTeamName()+ "");
 
         // Update Team 1 and Team 2 logos
         System.out.println("Updating Team 1 Logo: " + match.getTeam1().getTeamLogo());
@@ -272,27 +273,40 @@ public class MatchScreen extends JFrame {
 
     
     public static void updateMatchResults(Match match) {
-        lblTeam1.setText("Team 1: " + match.getTeam1().getTeamName());
-        lblScore1.setText("Score: " + match.getScoreTeam1());
-        lblTeam2.setText("Team 2: " + match.getTeam2().getTeamName());
-        lblScore2.setText("Score: " + match.getScoreTeam2());
+        if (lblTeam1 != null) {
+            lblTeam1.setText("Team 1: " + match.getTeam1().getTeamName());
+        }
+        if (lblScore1 != null) {
+            lblScore1.setText("Score: " + match.getScoreTeam1());
+        }
+        if (lblTeam2 != null) {
+            lblTeam2.setText("Team 2: " + match.getTeam2().getTeamName());
+        }
+        if (lblScore2 != null) {
+            lblScore2.setText("Score: " + match.getScoreTeam2());
+        }
 
-        // If you have a GUI representation of the playoff tree or standings, you would also update that here.
-        // For example, you might have a method updateStandings() that refreshes the display of team standings.
+        // Update any other relevant components here, ensuring they are not null before accessing them.
+
+        // Call the method to update the standings, if applicable
         updateStandings();
     }
     
     
 
     private static void updateStandings() {
-    	standingsPanel.removeAll(); // Clear the previous standings
+    	if (standingsPanel != null) {
+            standingsPanel.removeAll();
 
-        for (Team team : teamManager.getTeams()) {
-            standingsPanel.add(new JLabel(team.getTeamName() + " - Wins: " + team.getWins() + ", Losses: " + team.getLosses()));
+            for (Team team : teamManager.getTeams()) {
+                standingsPanel.add(new JLabel(team.getTeamName() + " - Wins: " + team.getWins() + ", Losses: " + team.getLosses()));
+            }
+
+            standingsPanel.revalidate();
+            standingsPanel.repaint();
+        } else {
+            System.out.println("Attempted to update standings before standingsPanel was initialized");
         }
-
-        standingsPanel.revalidate();
-        standingsPanel.repaint();
     }
 
 

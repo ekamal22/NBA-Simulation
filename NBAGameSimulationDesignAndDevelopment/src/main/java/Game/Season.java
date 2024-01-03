@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -21,6 +22,7 @@ import javax.swing.Timer;
 import main.java.GUI.MatchScreen;
 import main.java.GUI.PlayoffSimulationScreen;
 import main.java.Team.Team;
+import main.java.Utils.Logging;
 
 public class Season {
     private List<Team> teams;
@@ -31,6 +33,8 @@ public class Season {
     private boolean isPaused;
     private Component parentComponent;
     private Consumer<List<Team>> openPlayoffSimulationCallback;
+    private Logging regularSeasonLogger = new Logging("C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/DataFiles/regularSeasonMatches.log");
+
     // Constructor
     public Season(Component parentComponent, List<Team> teams, Consumer<List<Team>> openPlayoffSimulationCallback) {
         this.teams = new ArrayList<>(teams); // Create a copy of the list to avoid external modifications
@@ -38,6 +42,7 @@ public class Season {
         this.isSeasonOver = false;
         this.parentComponent = parentComponent;
         this.openPlayoffSimulationCallback = openPlayoffSimulationCallback;
+        
         scheduleMatches(); // Schedule matches for the season
         
     }
@@ -45,6 +50,7 @@ public class Season {
         return currentMatchIndex < matches.size();
     }
     public void playNextMatch() {
+    	System.out.println("playNextMatch() is called.");
     	if (isPaused || !hasMoreMatches()) {
             return;
         }
@@ -53,7 +59,15 @@ public class Season {
         		match.playMatch();
         		updateTeamRecords(match);
         		currentMatchIndex++;
-
+        		
+        		String matchResult = String.format("Regular Season - Team %s vs Team %s - Winner: Team %s - Score: %d-%d",
+                        match.getTeam1().getTeamName(),
+                        match.getTeam2().getTeamName(),
+                        match.getWinner().getTeamName(),
+                        match.getScoreTeam1(),
+                        match.getScoreTeam2());
+regularSeasonLogger.log(matchResult);
+        		
         		if (!hasMoreMatches()) {
                 // Handle end of season logic here
         			calculateFinalStandings();
@@ -61,6 +75,7 @@ public class Season {
         			isSeasonOver = true;
             }
         }
+        	
     }
     
     

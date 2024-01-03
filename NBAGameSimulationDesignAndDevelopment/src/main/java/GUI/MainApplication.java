@@ -226,10 +226,12 @@ public class MainApplication extends JFrame {
     }*/
     
     public void openPlayoffSimulationScreen(List<Team> playoffTeams) {
+        System.out.println("Opening Playoff Simulation Screen with teams: ");
         List<Match> playoffMatches = new ArrayList<>();
         for (int i = 0; i < playoffTeams.size(); i += 2) {
             Team team1 = playoffTeams.get(i);
             Team team2 = playoffTeams.get(i + 1);
+            System.out.println("Match: " + team1.getTeamName() + " vs " + team2.getTeamName());
             playoffMatches.add(new Match(team1, team2));
         }
 

@@ -1,14 +1,22 @@
 package main.java.Utils;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Logger {
-    private static final String LOG_FILE = "application.log";
+public class Logging {
+    private String logFile;
 
-    public static void log(String message) {
-        try (FileWriter fw = new FileWriter(LOG_FILE, true);
+    // Constructor to specify log file name
+    public Logging(String fileName) {
+        this.logFile = fileName;
+    }
+
+    public void log(String message) {
+        try (FileWriter fw = new FileWriter(this.logFile, true);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
 
