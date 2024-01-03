@@ -339,9 +339,43 @@ playoffLogger.log(playoffMatchResult);
     }
 
     private void prepareNextRound() {
-        // Logic to prepare the next round of matches based on winners
-        // Reset currentMatchIndex and currentRoundTeams for the next round
+        // Assuming the currentRoundTeams list has been populated with the winners of the current round
+        if (!currentRoundTeams.isEmpty()) {
+            // Prepare the list for the next round matches
+            List<Match> nextRoundMatches = new ArrayList<>();
+
+            // Pair the winners in twos to create the next round's matches
+            for (int i = 0; i < currentRoundTeams.size(); i += 2) {
+                // Avoid index out of bounds
+                if (i + 1 < currentRoundTeams.size()) {
+                    Team team1 = currentRoundTeams.get(i);
+                    Team team2 = currentRoundTeams.get(i + 1);
+                    nextRoundMatches.add(new Match(team1, team2));
+                }
+            }
+
+            // Check if we have our final match
+            if (nextRoundMatches.size() == 1) {
+                JOptionPane.showMessageDialog(this, "Final match is set!", "Final", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            // Replace the current playoff matches with the next round matches
+            this.playoffMatches = nextRoundMatches;
+
+            // Reset the index for the next round
+            this.currentMatchIndex = 0;
+
+            // Clear the winners list for the next round
+            this.currentRoundTeams.clear();
+
+            // Optionally, you can reset the UI to reflect the new round
+            if (!playoffMatches.isEmpty()) {
+                updatePlayoffDetails(playoffMatches.get(0)); // Update the UI with the first match details of the next round
+                nextMatchButton.setEnabled(true); // Enable the next match button for the new round
+            }
+        }
     }
+
 
     private void announceChampion() {
         if (!currentRoundTeams.isEmpty()) {
