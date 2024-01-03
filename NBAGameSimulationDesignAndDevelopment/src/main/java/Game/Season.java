@@ -1,13 +1,20 @@
 package main.java.Game;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -23,12 +30,14 @@ public class Season {
     private int currentMatchIndex = 0;
     private boolean isPaused;
     private Component parentComponent;
+    private Consumer<List<Team>> openPlayoffSimulationCallback;
     // Constructor
-    public Season(Component parentComponent, List<Team> teams) {
+    public Season(Component parentComponent, List<Team> teams, Consumer<List<Team>> openPlayoffSimulationCallback) {
         this.teams = new ArrayList<>(teams); // Create a copy of the list to avoid external modifications
         this.matches = new ArrayList<>();
         this.isSeasonOver = false;
         this.parentComponent = parentComponent;
+        this.openPlayoffSimulationCallback = openPlayoffSimulationCallback;
         scheduleMatches(); // Schedule matches for the season
         
     }
@@ -168,24 +177,84 @@ public class Season {
     }
     
     public void playAndDelayMatches() {
-    	matchTimer = new Timer(1000, event -> {
-            if (!matches.isEmpty()) {
-                Match match = matches.remove(0);
+        matchTimer = new Timer(500, event -> {
+            if (hasMoreMatches()) {
+                // Play the next match
+                Match match = matches.get(currentMatchIndex);
                 match.playMatch();
                 updateTeamRecords(match);
+
                 // Update GUI
-                SwingUtilities.invokeLater(() -> MatchScreen.updateMatchResults(match)); // This needs to be done on the EDT
-                // More code to update the GUI for wins/losses
+                SwingUtilities.invokeLater(() -> MatchScreen.updateMatchResults(match));
+                currentMatchIndex++;
             } else {
-            	matchTimer.stop();
+                // Stop the timer and check if the season is over
+                matchTimer.stop();
                 ((Timer) event.getSource()).stop();
-                // Now you need to create a list of playoff teams and pass it to displayPlayoffTree
-                List<Team> playoffTeams = determinePlayoffTeams(); // You'll need to implement this method
-                SwingUtilities.invokeLater(() -> displayPlayoffTree(this.parentComponent, playoffTeams, this)); // Also invoke this on the EDT
+
+                if (!isSeasonOver) {
+                    // Season just ended, calculate final standings and start playoffs
+                    calculateFinalStandings();
+                    isSeasonOver = true;
+                    List<Team> playoffTeams = determinePlayoffTeams();
+
+                    // Display the playoff tree
+                    SwingUtilities.invokeLater(() -> {
+                        JFrame frame;
+                        if (parentComponent instanceof JFrame) {
+                            frame = (JFrame) parentComponent;
+                        } else {
+                            frame = (JFrame) SwingUtilities.getWindowAncestor(parentComponent);
+                        }
+                        displayPlayoffTree(frame, playoffTeams, openPlayoffSimulationCallback);
+                    });
+                }
             }
         });
         matchTimer.setInitialDelay(0);
-        
+        //matchTimer.start();
+    }
+    
+    
+    
+
+    public void displayPlayoffTree(JFrame parentFrame, List<Team> playoffTeams, Consumer<List<Team>> onContinueCallback) {
+        StringBuilder treeBuilder = new StringBuilder();
+        // Logic to build the playoff tree string
+        // For simplicity, let's assume it's a basic string representation
+        treeBuilder.append("Playoff Tree\n");
+        for (int i = 0; i < playoffTeams.size(); i++) {
+            treeBuilder.append(playoffTeams.get(i).getTeamName()).append("\n");
+        }
+
+        // Display the playoff tree in a dialog or a separate window
+        JTextArea playoffTreeTextArea = new JTextArea(treeBuilder.toString());
+        playoffTreeTextArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(playoffTreeTextArea);
+
+        // Creating a dialog to display the playoff tree
+        JDialog dialog = new JDialog(parentFrame, "Playoff Tree", true);
+        dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
+        dialog.add(scrollPane);
+
+        // Adding a continue button
+        JButton continueButton = new JButton("Continue");
+        continueButton.addActionListener(e -> {
+        	if (openPlayoffSimulationCallback != null) {
+                openPlayoffSimulationCallback.accept(playoffTeams); // Trigger the callback with the list of playoff teams
+            } else {
+                // You might want to handle the case where the callback is null more gracefully
+                throw new IllegalStateException("Playoff simulation callback is not initialized.");
+            }
+            dialog.dispose();
+            onContinueCallback.accept(playoffTeams); // Trigger the callback with the list of playoff teams
+        });
+        dialog.add(continueButton);
+
+        // Set dialog size, location, and make it visible
+        dialog.setSize(400, 300);
+        dialog.setLocationRelativeTo(parentFrame);
+        dialog.setVisible(true);
     }
     
     public void setPaused(boolean paused) {
@@ -221,83 +290,36 @@ public class Season {
         int numberOfPlayoffTeams = 8;
         return sortedTeams.subList(0, Math.min(numberOfPlayoffTeams, sortedTeams.size()));
     }
-    private void displayPlayoffTree(Component parentComponent, List<Team> playoffTeams, Season currentSeason) {
-        // Build the string representation of the playoff tree
-        StringBuilder treeBuilder = new StringBuilder();
-        int rounds = (int) (Math.log(playoffTeams.size()) / Math.log(2));
-        int matchNumber = 1;
-
-        for (int round = 0; round <= rounds; round++) {
-            int roundMatches = (int) Math.pow(2, rounds - round);
-            treeBuilder.append("Round ").append(round + 1).append(":\n");
-            for (int match = 0; match < roundMatches; match++) {
-                if (round * roundMatches + match < playoffTeams.size()) {
-                    Team team = playoffTeams.get(round * roundMatches + match);
-                    treeBuilder.append("Match ").append(matchNumber).append(": ")
-                            .append(team.getTeamName()).append("\n");
-                    matchNumber++;
-                }
-            }
-            treeBuilder.append("\n");
-        }
-
-        // Ensure parentComponent is inside a JFrame
-        JFrame parentFrame = null;
-        if (parentComponent instanceof JFrame) {
-            parentFrame = (JFrame) parentComponent;
-        } else {
-            parentFrame = (JFrame) SwingUtilities.getWindowAncestor(parentComponent);
-        }
-
-        // Start the playoff simulation screen
-        PlayoffSimulationScreen simulationScreen = new PlayoffSimulationScreen(parentFrame, getPlayoffMatches(playoffTeams), treeBuilder.toString());
-        simulationScreen.setVisible(true);
-    }
     
-    private List<Match> getPlayoffMatches(List<Team> playoffTeams) {
-        // Logic to prepare the matches for the playoff rounds
-        List<Match> playoffMatches = new ArrayList<>();
-        // ... [Logic to prepare the matches] ...
-        return playoffMatches;
+    @FunctionalInterface
+    public interface PlayoffStartCallback {
+        void startPlayoffSimulation(List<Team> playoffTeams);
     }
 
-    // Helper method to prepare playoff matches based on the teams
-    private List<Match> preparePlayoffMatches(List<Team> teams) {
-        // Similar logic as in the startPlayoffs method to create matches
-        List<Match> matches = new ArrayList<>();
-        // ... logic to prepare matches ...
-        return matches;
-    }
-
-
+    
 
     private void startPlayoffs() {
-        List<Team> playoffTeams = getTopTeams(8); // Get the top 8 teams
+        List<Team> playoffTeams = determinePlayoffTeams(); // Get the top teams for playoffs
         List<Match> playoffMatches = new ArrayList<>();
 
         // Prepare the matches for the playoff rounds
         for (int i = 0; i < playoffTeams.size(); i += 2) {
             Team team1 = playoffTeams.get(i);
-            Team team2 = (i + 1 < playoffTeams.size()) ? playoffTeams.get(i + 1) : null;
-            if (team2 != null) {
-                playoffMatches.add(new Match(team1, team2));
-            }
+            Team team2 = playoffTeams.get(i + 1);
+
+            // Create a match between each pair of teams
+            playoffMatches.add(new Match(team1, team2));
         }
 
         // Ensure parentComponent is inside a JFrame
         JFrame parentFrame = (parentComponent instanceof JFrame) 
-                             ? (JFrame) parentComponent 
-                             : (JFrame) SwingUtilities.getWindowAncestor(parentComponent);
+                ? (JFrame) parentComponent 
+                : (JFrame) SwingUtilities.getWindowAncestor(parentComponent);
 
         // Start the playoff simulation screen with an empty string for the playoff tree
         PlayoffSimulationScreen simulationScreen = new PlayoffSimulationScreen(parentFrame, playoffMatches, "");
         simulationScreen.setVisible(true);
-
-        // The champion will be determined and displayed in the simulation screen
     }
-
-
-	
 	
 
 

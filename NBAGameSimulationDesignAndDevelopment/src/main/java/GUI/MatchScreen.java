@@ -270,11 +270,6 @@ public class MatchScreen extends JFrame {
         });
     }
 
-
-
-
-
-
     
     public static void updateMatchResults(Match match) {
         lblTeam1.setText("Team 1: " + match.getTeam1().getTeamName());

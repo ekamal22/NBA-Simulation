@@ -2,12 +2,14 @@ package main.java.GUI;
 
 import main.java.User.UserManager;
 import main.java.Game.Match;
+import main.java.Game.Season;
 import main.java.Team.Team;
 import main.java.Team.TeamManager;
 import main.java.User.User;
 import main.java.Utils.AuthenticationService;
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainApplication extends JFrame {
@@ -17,7 +19,9 @@ public class MainApplication extends JFrame {
     private User currentUser;
     private Team currentUserTeam;
     private JMenuItem draftUserTeamItem;
-    
+    JFrame parentComponent;
+    Season currentSeason;
+	List<Team> playoffTeams;
     
     public MainApplication() {
         userManager = new UserManager();
@@ -122,18 +126,28 @@ public class MainApplication extends JFrame {
         if (teamManager.getParentComponent() == null) {
             JOptionPane.showMessageDialog(this, "The parent component has not been set.");
             return;
-        }
+        }        
         // Assuming there's a method in TeamManager to start the season
+        teamManager.setPlayoffCallback(this::openPlayoffSimulationScreen);
         boolean seasonStarted = teamManager.startSeason();
 
         if (seasonStarted) {
             JOptionPane.showMessageDialog(this, "Season has started successfully!");
-            // You might want to open the match/season screen here or perform other actions
-            openMatchSeasonScreen();
+            
+            // Instantiate currentSeason with the callback to open playoff simulation
+            List<Team> teams = teamManager.getTeams(); // Assume you get the teams list from your teamManager
+            currentSeason = new Season(this, teams, this::openPlayoffSimulationScreen); // The `this` context is MainApplication
+
+            openMatchSeasonScreen(); // Open the screen to display regular season matches
+            /*if (currentSeason != null) {
+                List<Team> playoffTeams = currentSeason.determinePlayoffTeams();
+                currentSeason.displayPlayoffTree(this, playoffTeams, this::openPlayoffSimulationScreen);
+            }*/
         } else {
             JOptionPane.showMessageDialog(this, "Failed to start the season. Please try again.");
         }
     }
+    
 
     private void openUpdateUserScreen() {
         if (currentUser != null) {
@@ -185,6 +199,48 @@ public class MainApplication extends JFrame {
             JOptionPane.showMessageDialog(this, "No matches scheduled for the season.");
         }
     }
+    /*private void openPlayoffSimulationScreen() {
+        Season currentSeason = teamManager.getCurrentSeason();
+        
+        // Ensure the current season is available and has finished regular matches
+        if (currentSeason != null && currentSeason.isSeasonOver()) {
+            // Get the top teams for playoffs
+            List<Team> playoffTeams = currentSeason.determinePlayoffTeams();
+
+            // Prepare the matches for the playoff rounds
+            List<Match> playoffMatches = new ArrayList<>();
+            for (int i = 0; i < playoffTeams.size(); i += 2) {
+                Team team1 = playoffTeams.get(i);
+                Team team2 = playoffTeams.get(i + 1);
+
+                // Create a match between each pair of teams
+                playoffMatches.add(new Match(team1, team2));
+            }
+
+            // Initiate the playoff simulation screen
+            PlayoffSimulationScreen simulationScreen = new PlayoffSimulationScreen(this, playoffMatches, "");
+            simulationScreen.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Playoff matches are not yet available or the season has not ended.");
+        }
+    }*/
+    
+    public void openPlayoffSimulationScreen(List<Team> playoffTeams) {
+        List<Match> playoffMatches = new ArrayList<>();
+        for (int i = 0; i < playoffTeams.size(); i += 2) {
+            Team team1 = playoffTeams.get(i);
+            Team team2 = playoffTeams.get(i + 1);
+            playoffMatches.add(new Match(team1, team2));
+        }
+
+        PlayoffSimulationScreen simulationScreen = new PlayoffSimulationScreen(this, playoffMatches, "");
+        simulationScreen.setVisible(true);
+    }
+
+    // Example of using displayPlayoffTree with the callback
+    // Assuming currentSeason is an instance of Season
+    
+
 
     // Method to get or create a current match (this is just a placeholder, implement according to your logic)
     private Match getCurrentMatch() {

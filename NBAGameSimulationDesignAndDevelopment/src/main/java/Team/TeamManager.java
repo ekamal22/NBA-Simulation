@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import main.java.Game.Season;
 import main.java.Player.Center;
@@ -25,7 +26,7 @@ public class TeamManager {
     private final int MAX_PLAYERS_PER_TEAM = 15;
     private static Season currentSeason;
     private Component parentComponent;
-
+    private Consumer<List<Team>> playoffCallback;
     // Constructor
     public TeamManager() {
         teams = new ArrayList<>();
@@ -219,15 +220,38 @@ public class TeamManager {
 
     
     public boolean startSeason() {
-        if (isSeasonReady()) {
-            currentSeason = new Season(parentComponent, teams); // Use the stored parentComponent
-            currentSeason.playAndDelayMatches();
-            return true;
-            
+        // Check if the season is ready to be started
+        if (!isSeasonReady()) {
+            System.out.println("Season not ready. Auto-drafting players to teams.");
+            autoDraftForTeams();
         }
-        return false;
         
-        
+        // Ensure the callback has been set to avoid NullPointerException
+        if (playoffCallback == null) {
+            System.err.println("Cannot start season: playoffCallback is not set.");
+            return false;
+        }
+
+        // Check if the teams are prepared for the season
+        if (isSeasonReady()) {
+            // Ensure the parentComponent is not null, otherwise, GUI will not be able to start
+            if (parentComponent == null) {
+                System.err.println("Parent component is not set.");
+                return false;
+            }
+            
+            // Start the season with the current teams and the parent component
+            // The consumer `playoffCallback` is used here to handle what happens when playoffs are to be started
+            currentSeason = new Season(parentComponent, teams, playoffCallback);
+            
+            // Start match simulations or any other initial season processes
+            currentSeason.playAndDelayMatches();
+            System.out.println("Season started.");
+            return true;
+        } else {
+            System.out.println("Failed to start the season. Teams are not ready.");
+            return false;
+        }
     }
     
     public Component getParentComponent() {
@@ -260,6 +284,10 @@ public class TeamManager {
         return players != null && players.size() >= MIN_PLAYERS_PER_TEAM && players.size() <= MAX_PLAYERS_PER_TEAM;
     }
     
+    public void setPlayoffCallback(Consumer<List<Team>> playoffCallback) {
+        this.playoffCallback = playoffCallback;
+    }
+    
     public void startNewSeason() {
         if (!isSeasonReady()) {
             System.out.println("Season not ready. Auto-drafting players to teams.");
@@ -267,7 +295,8 @@ public class TeamManager {
         }
 
         if (isSeasonReady()) {
-            currentSeason = new Season(parentComponent, teams); // Ensure this is correctly initialized
+            // Ensure this is correctly initialized and include the callback
+            currentSeason = new Season(parentComponent, teams, playoffCallback);
             System.out.println("New season started.");
         } else {
             System.out.println("Failed to start the season. Teams are not ready.");
