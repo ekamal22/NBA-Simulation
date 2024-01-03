@@ -192,7 +192,7 @@ regularSeasonLogger.log(matchResult);
     }
     
     public void playAndDelayMatches() {
-        matchTimer = new Timer(500, event -> {
+        matchTimer = new Timer(200, event -> {
             if (hasMoreMatches()) {
                 // Play the next match
                 Match match = matches.get(currentMatchIndex);

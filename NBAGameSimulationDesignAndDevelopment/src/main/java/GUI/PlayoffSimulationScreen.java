@@ -313,7 +313,21 @@ playoffLogger.log(playoffMatchResult);
     }
 
     private void pauseMatch(ActionEvent e) {
-        // Logic to pause the match simulation
+        // Check if the match simulation is currently running
+        if (matchTimer != null && matchTimer.isRunning()) {
+            // Stop the timer to pause the match simulation
+            matchTimer.stop();
+            
+            // Optionally, update the state of the buttons
+            startButton.setEnabled(true); // Enable the start button to allow resuming
+            pauseButton.setEnabled(false); // Disable the pause button since we're already paused
+            
+            // Provide feedback to the user that the match simulation has been paused
+            JOptionPane.showMessageDialog(this, "The match simulation has been paused.", "Paused", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            // If the timer wasn't running, let the user know that there's nothing to pause
+            JOptionPane.showMessageDialog(this, "No match is currently being simulated to pause.", "Nothing to pause", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     private void updateRoundTeams(Team winner) {
