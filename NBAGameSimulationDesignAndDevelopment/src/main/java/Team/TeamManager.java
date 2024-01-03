@@ -1,5 +1,6 @@
 package main.java.Team;
 
+import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,6 +24,8 @@ public class TeamManager {
     private final int MIN_PLAYERS_PER_TEAM = 5;
     private final int MAX_PLAYERS_PER_TEAM = 15;
     private static Season currentSeason;
+    private Component parentComponent;
+
     // Constructor
     public TeamManager() {
         teams = new ArrayList<>();
@@ -53,18 +56,18 @@ public class TeamManager {
         String[] teamLogos = {"C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Atlanta Hawks.png",
         		"C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Celtics logo.png",
         		"C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Brooklyn Nets.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Charlotte Hornets.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Chicago Bulls.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Cleveland Cavaliers.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Dallas Mavericks.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Denver Nuggets.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Detroit Pistons.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Golden State Warriors.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Houston Rockets.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Indiana Pacers.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Los Angeles Clippers.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Charlotte Hornets.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Chicago Bulls.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Cleveland Cavaliers.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Dallas Mavericks.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Denver Nuggets.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Detroit Pistons.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Golden State Warriors.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Houston Rockets.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Indiana Pacers.png",
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Los Angeles Clippers.png",
         	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Los Angeles-Lakers.png",
-        	    "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\Seattle SuperSonics.png"};
+        	    "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Seattle Super Sonics.png"};
         for (int i = 0; i < 15; i++) {
             createTeam(teamNames[i], teamLogos[i]);
         }
@@ -208,15 +211,29 @@ public class TeamManager {
     public Map<String, Player> getAvailablePlayers() {
         return new HashMap<>(availablePlayers); // Return a copy to prevent external modification
     }
-    public boolean startSeason() {
-        if (isSeasonReady()) {
-            currentSeason = new Season(teams);
-            currentSeason.playAndDelayMatches();
-            return true;// Updated to use the delay
-        }
-        return false;
+    
+    
+    public void setParentComponent(Component parentComponent) {
+        this.parentComponent = parentComponent;
     }
 
+    
+    public boolean startSeason() {
+        if (isSeasonReady()) {
+            currentSeason = new Season(parentComponent, teams); // Use the stored parentComponent
+            currentSeason.playAndDelayMatches();
+            return true;
+            
+        }
+        return false;
+        
+        
+    }
+    
+    public Component getParentComponent() {
+        return this.parentComponent;
+    }
+    
     public boolean isSeasonReady() {
         if (teams.isEmpty()) {
             return false; // No teams are registered
@@ -250,13 +267,12 @@ public class TeamManager {
         }
 
         if (isSeasonReady()) {
-            currentSeason = new Season(teams);
+            currentSeason = new Season(parentComponent, teams); // Ensure this is correctly initialized
             System.out.println("New season started.");
         } else {
             System.out.println("Failed to start the season. Teams are not ready.");
         }
     }
-    
     
 
 

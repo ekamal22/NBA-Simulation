@@ -5,11 +5,14 @@ import main.java.Game.Season;
 import main.java.Team.Team;
 import main.java.Team.TeamManager;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -77,6 +80,9 @@ public class MatchScreen extends JFrame {
         
         lblTeam1Logo = new JLabel();
         lblTeam2Logo = new JLabel();
+
+        lblTeam1Logo.setPreferredSize(new Dimension(80, 80)); // Set the preferred size for the logo labels
+        lblTeam2Logo.setPreferredSize(new Dimension(80, 80));
         
         btnPauseResume = new JButton("Pause");
         btnPauseResume.addActionListener(e -> togglePauseResume());
@@ -145,7 +151,8 @@ public class MatchScreen extends JFrame {
             }*/
         	@Override
             public void actionPerformed(ActionEvent e) {
-                currentSeason.playAndDelayMatches(); // Start the simulation here
+                //currentSeason.playAndDelayMatches(); // Start the simulation here
+        		currentSeason.startMatches();
                 btnPlayMatch.setEnabled(false); // Disable the button after starting simulation
             }
         });
@@ -170,30 +177,28 @@ public class MatchScreen extends JFrame {
     private void playAndLoadNextMatch() {
         if (!match.isPlayed()) {
             match.playMatch(); // Simulate the match
-            lblScore1.setText("Score: " + match.getScoreTeam1());
-            lblScore2.setText("Score: " + match.getScoreTeam2());
-            
-            // Increment the index to load the next match
-            currentMatchIndex++;
-            
-            if (currentMatchIndex < matches.size()) {
-                // Update the match object with the next match
+            updateMatchDetails(); // Update the GUI with new match details
+            updateLogo(lblTeam1Logo, match.getTeam1().getTeamLogo());
+            updateLogo(lblTeam2Logo, match.getTeam2().getTeamLogo());
+            if (currentMatchIndex < matches.size() - 1) {
+                // Prepare for the next match
+                currentMatchIndex++;
                 match = matches.get(currentMatchIndex);
-                
-                // Update the match details in the UI
-                updateMatchDetails();
-                
-                // Reset the Play Match button to be enabled for the next match
+                updateMatchDetails(); // Update the GUI with new match details
                 btnPlayMatch.setEnabled(true);
             } else {
-                // No more matches to play
+                // Season is completed
                 btnPlayMatch.setEnabled(false);
                 JOptionPane.showMessageDialog(this, "Season completed!");
             }
         }
+        SwingUtilities.invokeLater(() -> {
+            updateMatchDetails(); // This method call needs to be on the EDT
+        });
     }
 
-    private void updateMatchDetails() {
+
+    /*private void updateMatchDetails() {
         // Update labels for the new match
     	// Update labels for the new match
         ImageIcon team1Logo = new ImageIcon(match.getTeam1().getTeamLogo());
@@ -215,7 +220,61 @@ public class MatchScreen extends JFrame {
         lblTeam2.setText("Team 2: " + match.getTeam2().getTeamName());
         lblScore1.setText("Score: N/A");
         lblScore2.setText("Score: N/A");
+    }*/
+    
+    private void updateMatchDetails() {
+        // Load the current match
+        match = matches.get(currentMatchIndex);
+
+        // Update Team 1 and Team 2 names
+        lblTeam1.setText("Team 1: " + match.getTeam1().getTeamName());
+        lblTeam2.setText("Team 2: " + match.getTeam2().getTeamName());
+
+        // Update Team 1 and Team 2 logos
+        System.out.println("Updating Team 1 Logo: " + match.getTeam1().getTeamLogo());
+        updateLogo(lblTeam1Logo, match.getTeam1().getTeamLogo());
+        System.out.println("Updating Team 2 Logo: " + match.getTeam2().getTeamLogo());
+        updateLogo(lblTeam2Logo, match.getTeam2().getTeamLogo());
+
+        // Update scores
+        lblScore1.setText(" Score: " + (match.isPlayed() ? match.getScoreTeam1() : "N/A"));
+        lblScore2.setText(" Score: " + (match.isPlayed() ? match.getScoreTeam2() : "N/A"));
     }
+
+
+    private void updateLogo(JLabel label, String logoPath) {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                File logoFile = new File(logoPath);
+                if (logoFile.exists()) {
+                    ImageIO.setUseCache(false); // Disable the image cache
+                    BufferedImage img = ImageIO.read(logoFile);
+                    ImageIcon icon = new ImageIcon(img.getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+                    label.setIcon(icon);
+                    System.out.println("Logo updated for path: " + logoPath);
+                } else {
+                    System.out.println("Logo file not found at path: " + logoPath);
+                    label.setIcon(null);
+                    label.setText("Logo not found");
+                }
+            } catch (IOException e) {
+                System.out.println("Exception when updating logo for path: " + logoPath);
+                e.printStackTrace();
+                label.setIcon(null);
+                label.setText("Error loading logo");
+            }
+            label.revalidate();
+            label.repaint();
+            this.revalidate(); // Revalidate the entire JFrame
+            this.repaint(); // Repaint the entire JFrame
+        });
+    }
+
+
+
+
+
+
     
     public static void updateMatchResults(Match match) {
         lblTeam1.setText("Team 1: " + match.getTeam1().getTeamName());
@@ -227,6 +286,8 @@ public class MatchScreen extends JFrame {
         // For example, you might have a method updateStandings() that refreshes the display of team standings.
         updateStandings();
     }
+    
+    
 
     private static void updateStandings() {
     	standingsPanel.removeAll(); // Clear the previous standings
@@ -260,11 +321,13 @@ public class MatchScreen extends JFrame {
 
         // Start the Match Screen with a list of matches and the team manager
         SwingUtilities.invokeLater(new Runnable() {
+        	
             @Override
             public void run() {
                 new MatchScreen(matches,teamManager).setVisible(true);
             }
         });
+        
     }
     
     

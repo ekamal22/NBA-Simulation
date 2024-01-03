@@ -23,7 +23,7 @@ public class MainApplication extends JFrame {
         userManager = new UserManager();
         teamManager = new TeamManager();
         currentUser = null;
-
+        teamManager.setParentComponent(this);
         setTitle("NBA Game Simulation");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -116,6 +116,11 @@ public class MainApplication extends JFrame {
         if (!teamManager.isSeasonReady()) {
             JOptionPane.showMessageDialog(this, "Not all teams are ready. Please draft players first.");
             
+            return;
+        }
+        
+        if (teamManager.getParentComponent() == null) {
+            JOptionPane.showMessageDialog(this, "The parent component has not been set.");
             return;
         }
         // Assuming there's a method in TeamManager to start the season
