@@ -14,7 +14,7 @@ public class UserManager {
         loadUsers();
     }
 
-    // Load users from the file
+    // Loads users from the file
     private void loadUsers() {
         try (BufferedReader reader = new BufferedReader(new FileReader(usersFilePath))) {
             String line;
@@ -29,7 +29,7 @@ public class UserManager {
         }
     }
 
-    // Parse a line of text into a User object
+    // Parses a line of text into a User object
     private User parseUser(String line) {
         String[] parts = line.split(",");
         if (parts.length != 6) {
@@ -46,7 +46,7 @@ public class UserManager {
         return new User(nickname, password, realName, surname, age, email);
     }
 
-    // Register a new user
+    // Registers a new user
     public boolean registerUser(String nickname, String password, String realName, String surname, int age, String email) {
         if (isUserExists(nickname)) {
             return false;
@@ -58,12 +58,12 @@ public class UserManager {
         return true;
     }
 
-    // Check if a user already exists
+    // Checks if a user already exists
     private boolean isUserExists(String nickname) {
         return users.stream().anyMatch(user -> user.getNickname().equals(nickname));
     }
 
-    // Save a single user to the file
+    // Saves a single user to the file
     private void saveUser(User user) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(usersFilePath, true))) {
             writer.write(userToCsvLine(user) + "\n");
@@ -72,7 +72,7 @@ public class UserManager {
         }
     }
 
-    // Convert a User object to a CSV line
+    // Converts a User object to a CSV line
     private String userToCsvLine(User user) {
         return user.getNickname() + "," +
                user.getPassword() + "," +
@@ -82,13 +82,13 @@ public class UserManager {
                user.getEmail();
     }
 
-    // Log in a user
+    // Logs in a user
     public boolean loginUser(String nickname, String password) {
         return users.stream()
                     .anyMatch(user -> user.getNickname().equals(nickname) && user.getPassword().equals(password));
     }
 
-    // Update user information
+    // Updates user information
     public boolean updateUser(String nickname, String newPassword, String newSurname, int newAge, String newEmail, String newProfilePhoto) {
         for (User user : users) {
             if (user.getNickname().equals(nickname)) {
@@ -97,14 +97,14 @@ public class UserManager {
                 user.setAge(newAge);
                 user.setEmail(newEmail);
                 user.setProfilePhoto(newProfilePhoto);
-                saveAllUsers(); // Save all users to file
+                saveAllUsers(); // Saves all users to file
                 return true;
             }
         }
         return false;
     }
 
-    // Save all users to the file
+    // Saves all users to the file
     private void saveAllUsers() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(usersFilePath))) {
             for (User user : users) {
@@ -121,6 +121,6 @@ public class UserManager {
                 return user;
             }
         }
-        return null; // Return null if the user is not found
+        return null; // Returns null if the user is not found
     }
 }

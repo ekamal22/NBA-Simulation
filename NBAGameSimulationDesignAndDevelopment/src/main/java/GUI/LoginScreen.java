@@ -89,9 +89,9 @@ public class LoginScreen extends JFrame {
 
         if (isAuthenticated) {
             JOptionPane.showMessageDialog(this, "Login successful!");
-            User loggedInUser = userManager.getUser(username); // Assuming getUser() fetches the User object
+            User loggedInUser = userManager.getUser(username); 
             loginCallback.onLoginSuccess(loggedInUser);
-            // Proceed to the next part of your application
+            
             dispose(); // Close the login window
         } else {
             JOptionPane.showMessageDialog(this, "Invalid credentials. Please try again.");
@@ -99,10 +99,10 @@ public class LoginScreen extends JFrame {
     }
 
     public static void main(String[] args) {
-        // For testing purposes, create mock instances or pass null
-        AuthenticationService authService = new AuthenticationService(); // Replace with actual instantiation
-        UserManager userManager = null; // Replace with actual instantiation or mock
-        LoginCallback loginCallback = null; // Replace with actual implementation or mock
+        
+        AuthenticationService authService = new AuthenticationService();
+        UserManager userManager = null; 
+        LoginCallback loginCallback = null; 
 
         // Launch the login screen
         SwingUtilities.invokeLater(new Runnable() {

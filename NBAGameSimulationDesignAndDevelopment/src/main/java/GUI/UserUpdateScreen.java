@@ -30,10 +30,10 @@ public class UserUpdateScreen extends JFrame {
     }
 
     private void initializeComponents() {
-        setLayout(new GridBagLayout()); // Use GridBagLayout for layout management
+        setLayout(new GridBagLayout()); // Using GridBagLayout for layout management
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // Common settings for GridBagConstraints
+        
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(4, 4, 4, 4);
 
@@ -72,7 +72,7 @@ public class UserUpdateScreen extends JFrame {
         btnUpdate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle the update action
+                // Handles the update action
             }
         });
         add(btnUpdate, gbc);
@@ -84,7 +84,7 @@ public class UserUpdateScreen extends JFrame {
         btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose(); // Close the update screen
+                dispose(); // Closes the update screen
             }
         });
         add(btnCancel, gbc);
@@ -93,7 +93,7 @@ public class UserUpdateScreen extends JFrame {
 
     // Main method for testing
     public static void main(String[] args) {
-        UserManager userManager = new UserManager(); // Replace with actual instantiation
+        UserManager userManager = new UserManager(); // Replaces with actual instantiation
         SwingUtilities.invokeLater(() -> {
             new UserUpdateScreen(userManager, null).setVisible(true);
         });

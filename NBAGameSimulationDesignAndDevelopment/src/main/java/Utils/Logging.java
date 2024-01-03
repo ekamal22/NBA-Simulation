@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
+/*
+ * The Logging class provides a simple logging mechanism to write messages to a file.
+ * It is designed to append log messages to a specified file, each with a timestamp.
+ */
 public class Logging {
     private String logFile;
 

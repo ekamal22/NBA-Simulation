@@ -10,16 +10,15 @@ public class Match {
     private int scoreTeam2;
     private boolean isPlayed;
 
-    // Constructor
+    // Constructs a Match instance with two teams
     public Match(Team team1, Team team2) {
         this.team1 = team1;
         this.team2 = team2;
         this.isPlayed = false;
     }
 
-    // Simulate the match
+    // Simulates the match and determines the winner and scores
     public void playMatch() {
-        // Utilize the GameUtilities class to simulate the match and determine scores
         scoreTeam1 = GameUtilities.calculateTeamScore(team1);
         scoreTeam2 = GameUtilities.calculateTeamScore(team2);
 
@@ -27,7 +26,7 @@ public class Match {
         isPlayed = true;
     }
 
-    // Getters
+    // Accessor methods
     public Team getTeam1() {
         return team1;
     }
@@ -36,6 +35,7 @@ public class Match {
         return team2;
     }
 
+    // Returns the winner, throws exception if match not played
     public Team getWinner() {
         if (!isPlayed) {
             throw new IllegalStateException("Match has not been played yet.");
@@ -43,14 +43,15 @@ public class Match {
         return winner;
     }
     
+    // Returns the loser, throws exception if match not played
     public Team getLoser() {
         if (!isPlayed) {
             throw new IllegalStateException("Match has not been played yet.");
         }
-        // The loser is the team that is not the winner
         return winner == team1 ? team2 : team1;
     }
 
+    // Returns the score of team 1, throws exception if match not played
     public int getScoreTeam1() {
         if (!isPlayed) {
             throw new IllegalStateException("Match has not been played yet.");
@@ -58,6 +59,7 @@ public class Match {
         return scoreTeam1;
     }
 
+    // Returns the score of team 2, throws exception if match not played
     public int getScoreTeam2() {
         if (!isPlayed) {
             throw new IllegalStateException("Match has not been played yet.");
@@ -69,7 +71,7 @@ public class Match {
         return isPlayed;
     }
 
-    // toString method for debugging
+    // toString method for displaying match details
     @Override
     public String toString() {
         return "Match{" +
@@ -82,5 +84,5 @@ public class Match {
                '}';
     }
 
-    // Additional methods can be added as needed...
+    
 }

@@ -1,6 +1,5 @@
 package main.java.Game;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -11,28 +10,24 @@ import main.java.Team.Team;
 public class GameUtilities {
     private static final Random random = new Random();
 
-    // Method to generate a random score for a player
+    // Generates a random score for a player based on their stats and a random deviation
     public static int generatePlayerScore(Player player) {
-        // Random factor (e.g., -5 to 5 points deviation)
         int deviationRange = 5;
         int deviation = random.nextInt(deviationRange * 2 + 1) - deviationRange;
 
-        // Calculate score based on player stats and random deviation
         int score = player.calculateScore() + deviation;
-        return Math.max(score, 0); // Ensure the score is not negative
+        return Math.max(score, 0); // Ensures the score is non-negative
     }
 
-
-    // Simulate a match between two teams
+    // Simulates a match between two teams and returns the team with the higher score
     public static Team simulateMatch(Team team1, Team team2) {
         int score1 = calculateTeamScore(team1);
         int score2 = calculateTeamScore(team2);
 
-        // Return the team with the higher score
         return score1 > score2 ? team1 : team2;
     }
 
-    // Calculate the score for a team
+    // Calculates the total score for a team by summing the scores of all players
     protected static int calculateTeamScore(Team team) {
         int totalScore = 0;
         for (Player player : team.getPlayers()) {
@@ -41,42 +36,37 @@ public class GameUtilities {
         return totalScore;
     }
 
-    // Simulate an entire season
+    // Simulates an entire season, including matches and updating season statistics
     public static void simulateSeason(List<Team> teams) {
-        // Reset or initialize season stats for each team
-        // (This might involve setting win/loss records to 0, etc.)
+        // Initializes season stats for each team
 
-        // Simulate matches between each pair of teams
         for (Team team1 : teams) {
             for (Team team2 : teams) {
                 if (!team1.equals(team2)) {
                     Team winner = simulateMatch(team1, team2);
-                    // Update season stats based on match result
-                    // e.g., increment win count for the winner and loss count for the loser
+                    // Updates season stats based on the match result
                 }
             }
         }
 
-        // Additional season logic (e.g., ranking teams based on wins/losses)
+        
     }
 
-    // Simulate playoff rounds
+    // Simulates playoff rounds using a single-elimination format and determines the champion
     public static Team simulatePlayoffs(List<Team> playoffTeams) {
-        // Assuming a single-elimination format
         while (playoffTeams.size() > 1) {
             List<Team> nextRoundTeams = new ArrayList<>();
 
             for (int i = 0; i < playoffTeams.size(); i += 2) {
-                // Simulate a match between each pair of teams
                 Team winner = simulateMatch(playoffTeams.get(i), playoffTeams.get(i + 1));
-                nextRoundTeams.add(winner); // Add the winner to the next round
+                nextRoundTeams.add(winner); // Advances the winner to the next round
             }
 
-            playoffTeams = nextRoundTeams; // Update the list of teams for the next round
+            playoffTeams = nextRoundTeams;
         }
 
-        return playoffTeams.isEmpty() ? null : playoffTeams.get(0); // The last team is the champion
+        return playoffTeams.isEmpty() ? null : playoffTeams.get(0); // Declares the last team standing as the champion
     }
 
-    // Additional utility methods can be added as needed...
+   
 }

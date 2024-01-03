@@ -88,7 +88,7 @@ public class DraftScreen extends JFrame {
                 teamManager.draftPlayerToTeam(selectedPlayerName, userTeam.getTeamName());
                 JOptionPane.showMessageDialog(this, "Player drafted successfully!");
 
-                // Optionally, refresh the combo box or close the screen
+                // Maybe, refresh the combo box or close the screen
                 playerComboBox.removeItem(selectedPlayerName);
             } else {
                 JOptionPane.showMessageDialog(this, "Player is not available.");
@@ -97,9 +97,9 @@ public class DraftScreen extends JFrame {
     }
 
     public static void main(String[] args) {
-        // For testing purposes, assume there's a TeamManager instance and a user's team
-        TeamManager teamManager = new TeamManager(); // Replace with actual instantiation
-        Team userTeam = new Team("User Team", "user_team_logo.png"); // Replace with actual user team
+        
+        TeamManager teamManager = new TeamManager(); 
+        Team userTeam = new Team("User Team", "/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Default pfp.png"); 
 
         // Launch the draft screen
         SwingUtilities.invokeLater(new Runnable() {

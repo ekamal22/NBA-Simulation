@@ -32,9 +32,9 @@ public class MainApplication extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-     // Create an ImagePanel with the path to your image
+     // Creating an ImagePanel with the path to the image
         ImagePanel backgroundPanel = new ImagePanel("C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/main/resources/Pics/Fullscreen Image.png");
-     // Add the ImagePanel to the frame
+     // Adding the ImagePanel to the frame
         add(backgroundPanel, BorderLayout.CENTER);
         initializeMenu();
     }
@@ -52,14 +52,14 @@ public class MainApplication extends JFrame {
         userMenu.add(registerItem);
         menuBar.add(userMenu);
         setJMenuBar(menuBar);
-        // User Draft Team Menu Item
+        
         draftUserTeamItem = new JMenuItem("Draft Your Team");
         draftUserTeamItem.addActionListener(e -> openDraftScreen());
         draftUserTeamItem.setEnabled(false); // Initially disabled
         userMenu.add(draftUserTeamItem);
     }
 
-    // Revised openLoginScreen method
+    
     private void openLoginScreen() {
         AuthenticationService authService = new AuthenticationService(); 
         LoginScreen loginScreen = new LoginScreen(authService, userManager, new LoginCallback() {
@@ -96,17 +96,16 @@ public class MainApplication extends JFrame {
         menuBar.add(userMenu);
         setJMenuBar(menuBar);
 
-        // Repaint the frame to update the menu bar
+        // Repainting the frame to update the menu bar
         invalidate();
         validate();
         repaint();
     }
+    
     // Method to handle the start of the season
- // Inside MainApplication class
-
     private void startSeason() {
     	teamManager.printTeamSizes();
-        // Check if the user's team is ready
+        // Checking if the user's team is ready
         if (!teamManager.isTeamReady(currentUserTeam)) {
             JOptionPane.showMessageDialog(this, "Your team is not ready. Please draft players first.");
             openDraftScreen();
@@ -127,7 +126,7 @@ public class MainApplication extends JFrame {
             JOptionPane.showMessageDialog(this, "The parent component has not been set.");
             return;
         }        
-        // Assuming there's a method in TeamManager to start the season
+        
         teamManager.setPlayoffCallback(this::openPlayoffSimulationScreen);
         boolean seasonStarted = teamManager.startSeason();
 
@@ -135,14 +134,11 @@ public class MainApplication extends JFrame {
             JOptionPane.showMessageDialog(this, "Season has started successfully!");
             
             // Instantiate currentSeason with the callback to open playoff simulation
-            List<Team> teams = teamManager.getTeams(); // Assume you get the teams list from your teamManager
-            currentSeason = new Season(this, teams, this::openPlayoffSimulationScreen); // The `this` context is MainApplication
+            List<Team> teams = teamManager.getTeams();
+            currentSeason = new Season(this, teams, this::openPlayoffSimulationScreen); 
 
-            openMatchSeasonScreen(); // Open the screen to display regular season matches
-            /*if (currentSeason != null) {
-                List<Team> playoffTeams = currentSeason.determinePlayoffTeams();
-                currentSeason.displayPlayoffTree(this, playoffTeams, this::openPlayoffSimulationScreen);
-            }*/
+            openMatchSeasonScreen(); // Opening the screen to display regular season matches
+            
         } else {
             JOptionPane.showMessageDialog(this, "Failed to start the season. Please try again.");
         }
@@ -193,37 +189,13 @@ public class MainApplication extends JFrame {
     private void openMatchSeasonScreen() {
         List<Match> seasonMatches = teamManager.getCurrentSeason().getMatches();
         if (seasonMatches != null && !seasonMatches.isEmpty()) {
-            MatchScreen matchScreen = new MatchScreen(seasonMatches, teamManager); // Pass teamManager here
+            MatchScreen matchScreen = new MatchScreen(seasonMatches, teamManager); 
             matchScreen.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "No matches scheduled for the season.");
         }
     }
-    /*private void openPlayoffSimulationScreen() {
-        Season currentSeason = teamManager.getCurrentSeason();
-        
-        // Ensure the current season is available and has finished regular matches
-        if (currentSeason != null && currentSeason.isSeasonOver()) {
-            // Get the top teams for playoffs
-            List<Team> playoffTeams = currentSeason.determinePlayoffTeams();
-
-            // Prepare the matches for the playoff rounds
-            List<Match> playoffMatches = new ArrayList<>();
-            for (int i = 0; i < playoffTeams.size(); i += 2) {
-                Team team1 = playoffTeams.get(i);
-                Team team2 = playoffTeams.get(i + 1);
-
-                // Create a match between each pair of teams
-                playoffMatches.add(new Match(team1, team2));
-            }
-
-            // Initiate the playoff simulation screen
-            PlayoffSimulationScreen simulationScreen = new PlayoffSimulationScreen(this, playoffMatches, "");
-            simulationScreen.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(this, "Playoff matches are not yet available or the season has not ended.");
-        }
-    }*/
+    
     
     public void openPlayoffSimulationScreen(List<Team> playoffTeams) {
         System.out.println("Opening Playoff Simulation Screen with teams: ");
@@ -237,26 +209,22 @@ public class MainApplication extends JFrame {
 
         PlayoffSimulationScreen simulationScreen = new PlayoffSimulationScreen(this, playoffMatches, "");
         simulationScreen.setVisible(true);
-    }
-
-    // Example of using displayPlayoffTree with the callback
-    // Assuming currentSeason is an instance of Season
-    
+    }    
 
 
-    // Method to get or create a current match (this is just a placeholder, implement according to your logic)
+   
     private Match getCurrentMatch() {
         // Sample teams for testing
         Team team1 = new Team("Celtics", "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/mainresources/Pics/Celtics logo.png");
         Team team2 = new Team("Lakers", "C:/Users/Effendi Jabid Kamal/Documents/GitHub/NBAGameSimulationDesignAndDevelopment/src/mainresources/Pics/los-angeles-lakers-logo.png");
 
-        // Create a new match for demonstration
+        
         return new Match(team1, team2);
     }
     private void openRegistrationScreen() {
         RegistrationScreen registrationScreen = new RegistrationScreen(userManager);
         registrationScreen.setVisible(true);
-        // Handle post-registration actions
+        // Handles post-registration actions
     }
     
 

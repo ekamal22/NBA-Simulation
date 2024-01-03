@@ -27,10 +27,10 @@ public class TeamViewScreen extends JFrame {
     }
 
     private void initializeComponents() {
-        // Set up the columns for the table model
+        // Setting up the columns for the table model
         String[] columns = new String[]{"Name", "Position", "Points", "Rebounds", "Assists", "Blocks", "Steals"};
 
-        // Create a table model with the data
+        // Creating a table model with the data
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -39,7 +39,7 @@ public class TeamViewScreen extends JFrame {
             }
         };
 
-        // Fill the table model
+        // Filling the table model
         for (Player player : team.getPlayers()) {
             Vector<String> row = new Vector<>();
             row.add(player.getName());
@@ -52,12 +52,12 @@ public class TeamViewScreen extends JFrame {
             tableModel.addRow(row);
         }
 
-        // Set up the table with the data model
+        // Setting up the table with the data model
         tablePlayers = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tablePlayers);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Add a close button at the bottom
+        // Adding a close button at the bottom
         JPanel panelButtons = new JPanel();
         JButton btnClose = new JButton("Close");
         btnClose.addActionListener(e -> dispose());
@@ -66,10 +66,10 @@ public class TeamViewScreen extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Assume there's a team instance
+       
         Team team = new Team("Lakers", "C:\\Users\\Effendi Jabid Kamal\\Documents\\GitHub\\NBAGameSimulationDesignAndDevelopment\\src\\main\\resources\\Pics\\los-angeles-lakers-logo.png"); // Replace with actual team instance
 
-        // Add 12 dummy players for the demonstration
+        // Adding 12 dummy players for the demonstration
         team.addPlayer(new Player("LeBron James", "SF", 25, 7, 7, 0.5, 1));
         team.addPlayer(new Player("Anthony Davis", "PF", 22, 9, 3, 2, 1.2));
         team.addPlayer(new Player("Russell Westbrook", "PG", 20, 5, 8, 0.4, 1.5));
@@ -83,7 +83,7 @@ public class TeamViewScreen extends JFrame {
         team.addPlayer(new Player("Stanley Johnson", "SF", 4, 3, 1, 0.4, 0.2));
         team.addPlayer(new Player("Kendrick Nunn", "PG", 10, 2, 3, 0.2, 0.9));
 
-        // Launch the team view screen
+        // Launching the team view screen
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

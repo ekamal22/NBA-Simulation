@@ -10,7 +10,7 @@ public class Team {
     private List<Player> players;
     private String teamLogo; // Path to the team logo file
     private int wins;
-    private int losses; // Add this new member to track the number of losses
+    private int losses; 
 
     // Constructor
     public Team(String teamName, String teamLogo) {
@@ -20,7 +20,7 @@ public class Team {
     }
     
     public int compareTo(Team other) {
-        // Assuming more wins is better. Change this logic if you have other criteria.
+      
         return Integer.compare(other.getWins(), this.getWins());
     }
     
@@ -32,18 +32,15 @@ public class Team {
         return this.wins;
     }
     
-    public void addLoss() { // New method to increment the loss count
+    public void addLoss() { //  method to increment the loss count
         this.losses++;
     }
     
-    public int getLosses() { // New getter for losses
+    public int getLosses() { //  getter for losses
         return this.losses;
     }
     
-    // Add a player to the team
-    /*public void addPlayer(Player player) {
-        players.add(player);
-    }*/
+    
     
     public void addPlayer(Player player) {
         if (!players.contains(player)) {
@@ -51,12 +48,12 @@ public class Team {
         }
     }
 
-    // Remove a player from the team
+    // Removes a player from the team
     public boolean removePlayer(Player player) {
         return players.remove(player);
     }
 
-    // Get the total score of the team
+    // Gets the total score of the team
     public int calculateTeamScore() {
         int totalScore = 0;
         for (Player player : players) {
@@ -75,7 +72,7 @@ public class Team {
     }
 
     public List<Player> getPlayers() {
-        return new ArrayList<>(players); // Return a copy to prevent external modification
+        return new ArrayList<>(players); // Returns a copy to prevent external modification
     }
 
     // Setters
@@ -97,5 +94,5 @@ public class Team {
                '}';
     }
 
-    // Additional methods can be added as needed...
+  
 }

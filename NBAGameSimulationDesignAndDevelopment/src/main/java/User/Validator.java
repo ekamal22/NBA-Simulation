@@ -10,17 +10,17 @@ public class Validator {
     private static final int MIN_NAME_LENGTH = 3;
     private static final int MIN_AGE = 12;
 
-    // Validate email format
+    // Validates email format
     public static boolean isValidEmail(String email) {
         return EMAIL_PATTERN.matcher(email).matches();
     }
 
-    // Validate username (letters and numbers only)
+    // Validates username (letters and numbers only)
     public static boolean isValidUsername(String username) {
         return USERNAME_PATTERN.matcher(username).matches();
     }
 
-    // Validate password (length and complexity)
+    // Validates password (length and complexity)
     public static boolean isValidPassword(String password) {
         if (password.length() < MIN_PASSWORD_LENGTH) {
             return false;
@@ -47,16 +47,16 @@ public class Validator {
         return false;
     }
 
-    // Validate name (length and characters)
+    // Validates name (length and characters)
     public static boolean isValidName(String name) {
         return name.length() >= MIN_NAME_LENGTH && name.chars().allMatch(Character::isLetter);
     }
 
-    // Validate age
+    // Validates age
     public static boolean isValidAge(int age) {
         return age >= MIN_AGE;
     }
 
-    // Additional validation methods can be added as needed...
+   
 }
 

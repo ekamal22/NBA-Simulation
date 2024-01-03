@@ -23,7 +23,7 @@ public class ImagePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (image != null) {
-            // Draw the image scaled to the size of the component
+            // Drawing the image scaled to the size of the component
             g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
         }
     }

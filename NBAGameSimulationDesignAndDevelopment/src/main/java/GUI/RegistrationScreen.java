@@ -17,7 +17,7 @@ public class RegistrationScreen extends JFrame {
     private JButton btnRegister;
     private JButton btnCancel;
 
-    // Assume UserManager is a class that handles user registration
+    
     private UserManager userManager;
 
     public RegistrationScreen(UserManager userManager) {
@@ -126,8 +126,8 @@ public class RegistrationScreen extends JFrame {
     }
 
     public static void main(String[] args) {
-        // For testing purposes, assume there's a UserManager instance
-        UserManager userManager = new UserManager(); // Replace with actual instantiation
+        // For testing purposes
+        UserManager userManager = new UserManager(); 
 
         // Launch the registration screen
         SwingUtilities.invokeLater(new Runnable() {

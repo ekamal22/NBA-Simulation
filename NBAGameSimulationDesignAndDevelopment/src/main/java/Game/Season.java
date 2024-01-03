@@ -79,20 +79,7 @@ regularSeasonLogger.log(matchResult);
     }
     
     
-    // Schedule matches for the season
-    /*private void scheduleMatches() {
-        matches.clear(); // Clear previous schedule
-
-        // Implementing a single round-robin schedule
-        for (int i = 0; i < teams.size(); i++) {
-            for (int j = i + 1; j < teams.size(); j++) {
-                // Schedule match between team i and team j
-                matches.add(new Match(teams.get(i), teams.get(j)));
-            }
-        }
-
-        Collections.shuffle(matches); // Randomize the schedule
-    }*/
+    
     
     public void startMatches() {
         if (!matchTimer.isRunning()) {
@@ -145,13 +132,13 @@ regularSeasonLogger.log(matchResult);
     }
     
     private void calculateFinalStandings() {
-        // Sort teams based on wins (and other criteria if needed)
+        // Sorting teams based on wins (and other criteria if needed)
         Collections.sort(teams, (Team t1, Team t2) -> {
-            // Compare based on wins, you can add more criteria here
+            // Comparing based on wins, I can add more criteria  here
             return Integer.compare(t2.getWins(), t1.getWins());
         });
 
-        // Optionally, print final standings for debugging
+        
         System.out.println("Final Standings:");
         for (int i = 0; i < teams.size(); i++) {
             Team team = teams.get(i);
@@ -161,23 +148,23 @@ regularSeasonLogger.log(matchResult);
     
     private void updateTeamRecords(Match match) {
         Team winner = match.getWinner();
-        Team loser = match.getLoser(); // Assuming you have a method to get the losing team
+        Team loser = match.getLoser(); 
 
         if (winner != null && loser != null) {
             winner.addWin();
-            // Add logic for loser if needed, e.g., incrementing loss count
+           
             loser.addLoss();
         }
     }
     private List<Team> getTopTeams(int N) {
-        // Create a copy of the teams list to avoid modifying the original list
+        // Creating a copy of the teams list to avoid modifying the original list
         List<Team> sortedTeams = new ArrayList<>(teams);
 
-        // Sort the teams based on their win count in descending order
+        // Sorting the teams based on their win count in descending order
         Collections.sort(sortedTeams, new Comparator<Team>() {
             @Override
             public int compare(Team t1, Team t2) {
-                // Assuming each team object has a method getWins() that returns the number of wins
+                
                 return Integer.compare(t2.getWins(), t1.getWins());
             }
         });
@@ -203,17 +190,17 @@ regularSeasonLogger.log(matchResult);
                 SwingUtilities.invokeLater(() -> MatchScreen.updateMatchResults(match));
                 currentMatchIndex++;
             } else {
-                // Stop the timer and check if the season is over
+                // Stoping the timer and checking if the season is over
                 matchTimer.stop();
                 ((Timer) event.getSource()).stop();
 
                 if (!isSeasonOver) {
-                    // Season just ended, calculate final standings and start playoffs
+                    // Season just ended, calculating final standings and start playoffs
                     calculateFinalStandings();
                     isSeasonOver = true;
                     List<Team> playoffTeams = determinePlayoffTeams();
 
-                    // Display the playoff tree
+                    // Displaying the playoff tree
                     SwingUtilities.invokeLater(() -> {
                         JFrame frame;
                         if (parentComponent instanceof JFrame) {
@@ -227,7 +214,7 @@ regularSeasonLogger.log(matchResult);
             }
         });
         matchTimer.setInitialDelay(0);
-        //matchTimer.start();
+        //matchTimer.start(); need to figure out the issue later
     }
     
     
@@ -235,14 +222,14 @@ regularSeasonLogger.log(matchResult);
 
     public void displayPlayoffTree(JFrame parentFrame, List<Team> playoffTeams, Consumer<List<Team>> onContinueCallback) {
         StringBuilder treeBuilder = new StringBuilder();
-        // Logic to build the playoff tree string
-        // For simplicity, let's assume it's a basic string representation
+        
+        // For simplicity, let it be a basic string representation
         treeBuilder.append("Playoff Tree\n");
         for (int i = 0; i < playoffTeams.size(); i++) {
             treeBuilder.append(playoffTeams.get(i).getTeamName()).append("\n");
         }
 
-        // Display the playoff tree in a dialog or a separate window
+        // Displaying the playoff tree in a dialog or a separate window
         JTextArea playoffTreeTextArea = new JTextArea(treeBuilder.toString());
         playoffTreeTextArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(playoffTreeTextArea);
@@ -258,15 +245,15 @@ regularSeasonLogger.log(matchResult);
         	if (openPlayoffSimulationCallback != null) {
                 openPlayoffSimulationCallback.accept(playoffTeams); // Trigger the callback with the list of playoff teams
             } else {
-                // You might want to handle the case where the callback is null more gracefully
+                // To handle the case where the callback is null more gracefully
                 throw new IllegalStateException("Playoff simulation callback is not initialized.");
             }
             dialog.dispose();
-            onContinueCallback.accept(playoffTeams); // Trigger the callback with the list of playoff teams
+            onContinueCallback.accept(playoffTeams); // Triggering the callback with the list of playoff teams
         });
         dialog.add(continueButton);
 
-        // Set dialog size, location, and make it visible
+        // Setting dialog size, location, and make it visible
         dialog.setSize(400, 300);
         dialog.setLocationRelativeTo(parentFrame);
         dialog.setVisible(true);
@@ -287,7 +274,7 @@ regularSeasonLogger.log(matchResult);
     public List<Team> determinePlayoffTeams() {
         List<Team> sortedTeams = new ArrayList<>(this.teams);
 
-        // Sort the teams based on their wins, then losses (if wins are equal)
+        // Sorting the teams based on their wins, then losses (if wins are equal)
         Collections.sort(sortedTeams, new Comparator<Team>() {
             @Override
             public int compare(Team t1, Team t2) {
@@ -296,12 +283,12 @@ regularSeasonLogger.log(matchResult);
                 if (winComparison != 0) {
                     return winComparison;
                 }
-                // If wins are equal, compare by losses (fewer losses is better)
+                // If wins are equal, got to compare by losses (fewer losses is better)
                 return Integer.compare(t1.getLosses(), t2.getLosses());
             }
         });
 
-        // Assuming you want the top 8 teams for the playoffs
+        
         int numberOfPlayoffTeams = 8;
         return sortedTeams.subList(0, Math.min(numberOfPlayoffTeams, sortedTeams.size()));
     }
@@ -353,7 +340,7 @@ regularSeasonLogger.log(matchResult);
     
     
 
-    // Additional methods can be added as needed...
+    
 
     // toString method for debugging
     @Override

@@ -55,7 +55,7 @@ public class PlayoffSimulationScreen extends JDialog {
         lblRound = new JLabel();
         match = null;
 
-        // Initialize UI Components with playoff tree
+        // Initializing UI Components with playoff tree
         initializeComponents(playoffTree);
         setSize(600, 400);
         setLocationRelativeTo(parent);
@@ -66,7 +66,7 @@ public class PlayoffSimulationScreen extends JDialog {
     private void initializeComponents(String playoffTree) {
         System.out.println("Initializing components with playoff tree: " + playoffTree);
         
-        // Create components
+        // Creating components
         playoffTreeTextArea = new JTextArea(playoffTree);
         playoffTreeTextArea.setEditable(false);
         JScrollPane treeScrollPane = new JScrollPane(playoffTreeTextArea);
@@ -75,13 +75,13 @@ public class PlayoffSimulationScreen extends JDialog {
         nextMatchButton = new JButton("Next Match");
         pauseButton = new JButton("Pause");
         
-        // Instantiate labels
+        // Instantiating labels
         matchLabel = new JLabel("Match: ");
         team1Label = new JLabel("Team 1: ");
         team2Label = new JLabel("Team 2: ");
         scoreLabel = new JLabel("Score: ");
         
-        // Initialize additional labels
+        // Initializing additional labels
         lblTeam1 = new JLabel();
         lblScore1 = new JLabel();
         lblTeam2 = new JLabel();
@@ -91,7 +91,7 @@ public class PlayoffSimulationScreen extends JDialog {
         lblSeriesStatus = new JLabel();
         lblRound = new JLabel();
 
-        // Set action listeners for buttons
+        // Setting action listeners for buttons
         startButton.addActionListener(this::startPlayoffs);
         nextMatchButton.addActionListener(evt -> playNextMatch());
         nextMatchButton.setEnabled(false); // Initially disabled
@@ -121,7 +121,7 @@ public class PlayoffSimulationScreen extends JDialog {
         statusPanel.add(lblSeriesStatus, BorderLayout.NORTH);
         statusPanel.add(lblRound, BorderLayout.SOUTH);
 
-        // Combine team panels and status into a single details panel
+        // Combining team panels and status into a single details panel
         JPanel matchDetailsPanel = new JPanel();
         matchDetailsPanel.setLayout(new BoxLayout(matchDetailsPanel, BoxLayout.Y_AXIS));
         matchDetailsPanel.add(matchInfoPanel);
@@ -135,13 +135,13 @@ public class PlayoffSimulationScreen extends JDialog {
         controlPanel.add(nextMatchButton);
         controlPanel.add(pauseButton);
 
-        // Add components to the dialog
+        // Adding components to the dialog
         setLayout(new BorderLayout());
         add(treeScrollPane, BorderLayout.WEST);
         add(controlPanel, BorderLayout.SOUTH);
         add(matchDetailsPanel, BorderLayout.CENTER);
 
-        // Set default values or load the first match if available
+        // Setting default values or load the first match if available
         if (!playoffMatches.isEmpty()) {
             updatePlayoffDetails(playoffMatches.get(0)); // Update the UI with the first match details
         }
@@ -151,36 +151,36 @@ public class PlayoffSimulationScreen extends JDialog {
         System.out.println("Size of matchDetailsPanel: " + matchDetailsPanel.getPreferredSize());
         System.out.println("Size of controlPanel: " + controlPanel.getPreferredSize());
 
-        // Print out a message to indicate successful initialization
+        // Printing out a message to indicate successful initialization
         System.out.println("Components initialized and added to layout.");
 
-        // Force the window to layout its subcomponents
+        // Forcing the window to layout its subcomponents
         pack();
     }
 
 
     
     private void updatePlayoffDetails(Match playoffMatch) {
-        // Assuming you have class variables like lblSeriesStatus, lblRound, etc. that are similar to lblTeam1, lblScore1, etc.
+        
     	System.out.println("Updating playoff details for match: " + playoffMatch.getTeam1().getTeamName() + " vs " + playoffMatch.getTeam2().getTeamName());
         // Load the current playoff match details
-        this.match = playoffMatch; // Make sure this match is the current playoff match
+        this.match = playoffMatch; 
 
-        // Update team names and scores for the playoff match
+        // Updating team names and scores for the playoff match
         lblTeam1.setText("Team 1: " + match.getTeam1().getTeamName());
         lblScore1.setText("Score: " + (match.isPlayed() ? match.getScoreTeam1() : "N/A"));
         lblTeam2.setText("Team 2: " + match.getTeam2().getTeamName());
         lblScore2.setText("Score: " + (match.isPlayed() ? match.getScoreTeam2() : "N/A"));
 
-        // Update team logos for the playoff match
+        // Updating team logos for the playoff match
         refreshTeamLogoDisplay(lblTeam1Logo, match.getTeam1().getTeamLogo());
         refreshTeamLogoDisplay(lblTeam2Logo, match.getTeam2().getTeamLogo());
 
-        // Update series status and round information
+        // Updating series status and round information
         lblSeriesStatus.setText("Series Status: " + getSeriesStatus(playoffMatch));
         lblRound.setText("Round: " + getPlayoffRound(playoffMatch));
 
-        // Revalidate and repaint components to reflect changes
+        // Revalidating and repainting components to reflect changes
         revalidateAndRepaintComponents();
     }
     
@@ -194,7 +194,7 @@ public class PlayoffSimulationScreen extends JDialog {
                     // Default size if the component has no size yet
                     icon = new ImageIcon(icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
                 } else {
-                    // Scale the icon to the label's size
+                    // Scaling the icon to the label's size
                 	
                     icon = new ImageIcon(icon.getImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH));
                 }
@@ -242,7 +242,7 @@ public class PlayoffSimulationScreen extends JDialog {
             throw new IllegalArgumentException("Match not found in playoff matches.");
         }
 
-        // Determine the round based on the index
+        // Determining the round based on the index
         if (index < 4) { // First 4 matches are quarterfinals
             return 1;
         } else if (index < 6) { // Next 2 matches are semifinals
@@ -256,29 +256,20 @@ public class PlayoffSimulationScreen extends JDialog {
 
     private void revalidateAndRepaintComponents() {
         SwingUtilities.invokeLater(() -> {
-            // Update any other components that need to be refreshed
-            // This ensures all updates occur on the Event Dispatch Thread
+            
             this.revalidate();
             this.repaint();
         });
     }
 
 
-    /*private void startPlayoffs(ActionEvent e) {
-        // Disable the start button and enable the next match button
-        startButton.setEnabled(false);
-        nextMatchButton.setEnabled(true);
-        playNextMatch(e);
-        matchTimer = new Timer(1000, evt -> playNextMatch());
-        matchTimer.start();
-    }*/
     
     private void startPlayoffs(ActionEvent e) {
         startButton.setEnabled(false);
-        nextMatchButton.setEnabled(false); // Disable if automatic
-        pauseButton.setEnabled(true); // Enable if you have pause functionality
+        nextMatchButton.setEnabled(false); 
+        pauseButton.setEnabled(true); 
 
-        // Timer setup - assuming you want a delay of 1 second (1000 ms) between matches
+        // Timer setup for a delay of 1 sec between matches
         matchTimer = new Timer(1000, evt -> playNextMatch());
         matchTimer.start();
     }
@@ -289,7 +280,7 @@ public class PlayoffSimulationScreen extends JDialog {
             Match currentMatch = playoffMatches.get(currentMatchIndex);
             currentMatch.playMatch(); // Simulate the match
 
-            // Update labels with match info
+            // Updating labels with match info
             Team team1 = currentMatch.getTeam1();
             Team team2 = currentMatch.getTeam2();
             matchLabel.setText("Match: " + (currentMatchIndex + 1));
@@ -313,16 +304,16 @@ playoffLogger.log(playoffMatchResult);
     }
 
     private void pauseMatch(ActionEvent e) {
-        // Check if the match simulation is currently running
+        // Checking if the match simulation is currently running
         if (matchTimer != null && matchTimer.isRunning()) {
-            // Stop the timer to pause the match simulation
+            // Stoping the timer to pause the match simulation
             matchTimer.stop();
             
-            // Optionally, update the state of the buttons
-            startButton.setEnabled(true); // Enable the start button to allow resuming
-            pauseButton.setEnabled(false); // Disable the pause button since we're already paused
             
-            // Provide feedback to the user that the match simulation has been paused
+            startButton.setEnabled(true); // Enabling the start button to allow resuming
+            pauseButton.setEnabled(false); // Disabling the pause button since we're already paused
+            
+            //To Provide feedback to the user that the match simulation has been paused
             JOptionPane.showMessageDialog(this, "The match simulation has been paused.", "Paused", JOptionPane.INFORMATION_MESSAGE);
         } else {
             // If the timer wasn't running, let the user know that there's nothing to pause
@@ -339,14 +330,14 @@ playoffLogger.log(playoffMatchResult);
     }
 
     private void prepareNextRound() {
-        // Assuming the currentRoundTeams list has been populated with the winners of the current round
+       
         if (!currentRoundTeams.isEmpty()) {
-            // Prepare the list for the next round matches
+            // Preparing the list for the next round matches
             List<Match> nextRoundMatches = new ArrayList<>();
 
-            // Pair the winners in twos to create the next round's matches
+            // Pairing the winners in twos to create the next round's matches
             for (int i = 0; i < currentRoundTeams.size(); i += 2) {
-                // Avoid index out of bounds
+                // To avoid index out of bounds
                 if (i + 1 < currentRoundTeams.size()) {
                     Team team1 = currentRoundTeams.get(i);
                     Team team2 = currentRoundTeams.get(i + 1);
@@ -354,24 +345,24 @@ playoffLogger.log(playoffMatchResult);
                 }
             }
 
-            // Check if we have our final match
+            // Checking if we have our final match
             if (nextRoundMatches.size() == 1) {
                 JOptionPane.showMessageDialog(this, "Final match is set!", "Final", JOptionPane.INFORMATION_MESSAGE);
             }
 
-            // Replace the current playoff matches with the next round matches
+            // Replacing the current playoff matches with the next round matches
             this.playoffMatches = nextRoundMatches;
 
-            // Reset the index for the next round
+            // Resetting the index for the next round
             this.currentMatchIndex = 0;
 
-            // Clear the winners list for the next round
+            // Clearing the winners list for the next round
             this.currentRoundTeams.clear();
 
-            // Optionally, you can reset the UI to reflect the new round
+            
             if (!playoffMatches.isEmpty()) {
-                updatePlayoffDetails(playoffMatches.get(0)); // Update the UI with the first match details of the next round
-                nextMatchButton.setEnabled(true); // Enable the next match button for the new round
+                updatePlayoffDetails(playoffMatches.get(0)); // Updating the UI with the first match details of the next round
+                nextMatchButton.setEnabled(true); // Enabling the next match button for the new round
             }
         }
     }
@@ -382,6 +373,6 @@ playoffLogger.log(playoffMatchResult);
             Team champion = currentRoundTeams.get(0);
             JOptionPane.showMessageDialog(this, champion.getTeamName() + " is the champion!", "Champion", JOptionPane.INFORMATION_MESSAGE);
         }
-        dispose(); // Close the simulation screen
+        dispose(); // Closing the simulation screen
     }
 }

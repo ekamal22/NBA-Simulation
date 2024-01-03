@@ -82,5 +82,5 @@ public class User {
                '}';
     }
 
-    // Additional methods can be added as needed, such as validation methods
+   
 }
