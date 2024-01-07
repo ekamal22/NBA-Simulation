@@ -1,1 +1,3 @@
 ekamal,123456789,Effendi,Jabid Kamal,21,ekamal22@ku.edu.tr
+fzkaroby,987654321,Fateema,Zohora Karoby,17,fzkaroby@gmail.com
+sshamim,112233445,Shayela,Shamim,40,sshamim@gmail.com

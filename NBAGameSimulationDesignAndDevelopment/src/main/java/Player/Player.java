@@ -26,12 +26,12 @@ public class Player {
         this.blk = blk;
         this.stl = stl;
 
-        // Initialize weights based on position or some other logic
+        // Initializes weights based on position or some other logic
         initializeWeights();
     }
 
     protected void initializeWeights() {
-        // Example initialization, adjust based on your game logic
+        
         switch (position) {
             case "PG": // Point Guard
                 weightPts = 0.30;
@@ -40,9 +40,9 @@ public class Player {
                 weightBlk = 0.10;
                 weightStl = 0.10;
                 break;
-            // Add cases for other positions
+            
             default:
-                // Default weights (if needed)
+                
                 weightPts = 0.20;
                 weightTrb = 0.20;
                 weightAst = 0.20;
@@ -101,5 +101,5 @@ public class Player {
                 '}';
     }
 
-    // Additional methods can be added as needed...
+    
 }

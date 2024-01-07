@@ -11,7 +11,7 @@ public class SmallForward extends Player {
     @Override
     protected void initializeWeights() {
         // Setting weights specifically for a Small Forward
-        // These values are examples and should be adjusted based on your game's requirements
+        
         this.weightPts = 0.25; // Points
         this.weightTrb = 0.20; // Total Rebounds
         this.weightAst = 0.20; // Assists
@@ -19,5 +19,5 @@ public class SmallForward extends Player {
         this.weightStl = 0.20; // Steals
     }
 
-    // Additional Small Forward specific methods can be added here...
+    
 }

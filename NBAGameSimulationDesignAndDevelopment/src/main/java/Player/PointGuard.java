@@ -17,5 +17,5 @@ public class PointGuard extends Player {
         this.weightStl = 0.15;
     }
 
-    // Additional Point Guard specific methods can be added here...
+   
 }
